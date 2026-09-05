@@ -1,0 +1,82 @@
+{
+  "id": "a",
+  "title": "A. 认知类问题",
+  "subtitle": "代码难以理解或修改 —— 影响开发者,与机器运行无关",
+  "leaves": [
+    {
+      "symptom": "单个东西太大",
+      "symptomNote": "长函数、大文件,看半小时才敢改",
+      "tags": ["complexity-size"],
+      "keywords": ["split", "srp", "deep-module"]
+    },
+    {
+      "symptom": "东西之间的关系乱",
+      "symptomNote": "依赖像蜘蛛网",
+      "tags": ["coupling-structure"],
+      "keywords": ["layering", "dependency-direction", "facade", "module-entry"]
+    },
+    {
+      "symptom": "嵌套太深,逻辑呈箭头型",
+      "symptomNote": "if 套 if,主逻辑被挤到屏幕右边",
+      "tags": ["complexity-nesting"],
+      "keywords": ["guard-clause", "split"]
+    },
+    {
+      "symptom": "一处变化要改很多地方",
+      "symptomNote": "霰弹式修改",
+      "tags": ["coupling-change"],
+      "keywords": ["information-hiding"]
+    },
+    {
+      "symptom": "同一个修改要在多处重复",
+      "tags": ["duplication"],
+      "keywords": ["dry", "abstraction-reuse", "yagni"],
+      "warning": "只是「长得像」的代码别硬合并——巧合的重复不是重复,强行抽象会把两个独立演进的东西锁死。"
+    },
+    {
+      "symptom": "加新功能必须改老代码",
+      "symptomNote": "if-else 越接越长",
+      "tags": ["extensibility"],
+      "keywords": ["ocp", "polymorphism", "strategy", "table-driven", "decorator", "middleware", "template-method"]
+    },
+    {
+      "symptom": "两个接口对不上,又改不了其中一方",
+      "tags": ["integration"],
+      "keywords": ["adapter"]
+    },
+    {
+      "symptom": "创建对象写死类名,换实现要全局搜 new",
+      "tags": ["coupling-creation"],
+      "keywords": ["factory", "di"]
+    },
+    {
+      "symptom": "一变要通知多方,直接调用缠成网",
+      "tags": ["coupling-communication"],
+      "keywords": ["observer", "pubsub", "mediator"],
+      "warning": "代价:数据流不透明、难调试。事件链一长,「谁触发了谁」要靠全局搜索才能还原。"
+    },
+    {
+      "symptom": "全局实例到处被 import,测试难写",
+      "tags": ["testability"],
+      "keywords": ["explicit-injection", "controlled-singleton"]
+    },
+    {
+      "symptom": "业务逻辑和框架 / IO 缠在一起,没法单测",
+      "tags": ["testability"],
+      "keywords": ["functional-core", "di"]
+    },
+    {
+      "symptom": "改行为必须改代码发版,上线回滚都疼",
+      "tags": ["risk"],
+      "keywords": ["feature-flag"],
+      "warning": "开关是债:长期不清理的 flag 会让代码长出死分支——上线稳定后定期删。"
+    },
+    {
+      "id": "afraid-to-change",
+      "symptom": "不敢修改,担心破坏现有功能",
+      "tags": ["risk"],
+      "xref": { "target": "#legacy-code", "text": "⇢ 另一根源在 C" },
+      "keywords": ["contract-test"]
+    }
+  ]
+}

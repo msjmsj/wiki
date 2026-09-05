@@ -1,0 +1,8 @@
+{
+  "name": "problem-solution-tree",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node render/build.ts"
+  }
+}

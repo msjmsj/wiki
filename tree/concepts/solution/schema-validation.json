@@ -1,0 +1,4 @@
+{
+  "name": "Schema 校验",
+  "detail": "做法:边界处用 zod / JSON Schema 校验入站数据,不合法立刻报错"
+}

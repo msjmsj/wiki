@@ -1,0 +1,4 @@
+{
+  "name": "消息传递",
+  "detail": "做法:线程间不共享内存,靠发消息传数据(actor / channel / postMessage),同一时刻数据只有一个属主"
+}

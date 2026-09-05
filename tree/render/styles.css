@@ -1,0 +1,136 @@
+/* 问题 → 方案 分化树 —— 全部样式
+   设计原则:单色 + 字重区分层级;全屏分栏,细线分隔。
+   构建时由 render/template.ts 读取并内联进单文件 HTML。 */
+
+:root {
+  --ink:   #111827;   /* 主文字(问题表现、标题) */
+  --gray:  #4b5563;   /* 次级文字(方案标签) */
+  --faint: #9ca3af;   /* 辅助说明、箭头、标记 */
+  --line:  #e5e7eb;   /* 分隔线、标签描边 */
+  --hover: #f9fafb;   /* 行 hover */
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 28px 40px 40px;
+  font: 14px/1.7 -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  background: #fff;
+}
+
+/* ── 全屏分栏(细线分隔,无卡片框)───── */
+.poster {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+}
+.col { padding: 0 32px; }
+.col:first-child { padding-left: 0; }
+.col:last-child { padding-right: 0; }
+.col + .col { border-left: 1px solid var(--line); }
+
+/* ── 大类标题:黑色粗线,编辑风格 ───── */
+.col > h2 {
+  margin: 0; padding-bottom: 8px;
+  font-size: 16px; font-weight: 700; letter-spacing: .02em;
+  border-bottom: 2px solid var(--ink);
+}
+.col > .sub {
+  margin: 6px 0 14px;
+  font-size: 12px; color: var(--faint);
+}
+
+/* ── 大类内聚类:性质家族(两级)────── */
+.fam { margin-top: 14px; }
+.fam:first-of-type { margin-top: 4px; }
+.fam > h4 { margin: 0 0 4px; font-size: 12px; font-weight: 400; }
+/* 子性质小类:缩进一级 + 左侧细线 */
+.fam .cluster {
+  margin: 8px 0 0 2px; padding-left: 10px;
+  border-left: 1px solid var(--line);
+}
+.fam .cluster > h5 { margin: 0 0 2px; font-size: 12px; font-weight: 400; }
+
+/* ── 叶子:一行,表现粗体 + 关键字标签 ─ */
+ul.leaves { margin: 0; padding: 0; list-style: none; }
+ul.leaves > li { padding: 4px 8px; border-radius: 4px; line-height: 2; }
+ul.leaves > li:hover { background: var(--hover); }
+
+.sym { font-weight: 600; }
+/* 带补充说明的问题表现:虚线下划线 = 可点击 */
+.sym.more { border-bottom: 1px dashed #d1d5db; padding-bottom: 1px; }
+.sym.more:hover { border-bottom-color: var(--ink); }
+.arrow { color: var(--faint); margin: 0 2px 0 6px; }
+
+/* ── 标签:方案=空心胶囊,问题性质=实心灰块 ── */
+.kw {
+  display: inline-block;
+  margin: 2px 3px 2px 0; padding: 0 8px;
+  font-size: 12px; line-height: 20px; white-space: nowrap;
+  border: 1px solid #d1d5db; border-radius: 999px;
+  color: var(--gray);
+}
+.kw.more:hover { border-color: var(--ink); color: var(--ink); }
+
+.tag {
+  display: inline-block;
+  margin: 2px 3px 2px 0; padding: 0 6px;
+  font-size: 11px; line-height: 18px; white-space: nowrap;
+  background: #f3f4f6; border-radius: 4px;
+  color: var(--gray);
+}
+.tag.more:hover { background: #e5e7eb; color: var(--ink); }
+/* 家族头(根源概念):实心深色,与子类/行内标签拉开层级 */
+.tag.fam {
+  background: var(--ink); color: #f9fafb;
+  padding: 0 8px; font-weight: 600;
+}
+.tag.fam.more:hover { background: #000; color: #fff; }
+
+/* 可点击标签通用机制::focus 弹出解释,点击别处自动消失(纯 CSS,无 JS)*/
+.more { position: relative; cursor: pointer; }
+.more:focus { outline: none; }
+.more::after {
+  content: attr(data-detail);
+  position: absolute; left: 0; top: calc(100% + 4px); z-index: 10;
+  width: max-content; max-width: 260px;
+  background: var(--ink); color: #f9fafb;
+  font-size: 12px; line-height: 1.6;
+  padding: 6px 10px; border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+  opacity: 0; pointer-events: none; transition: opacity .12s;
+  white-space: pre-line;   /* note 与概念 detail 之间的换行生效 */
+  font-weight: 400;        /* 弹层不受宿主(如加粗的表现文字)影响 */
+  text-align: left;
+}
+.more:focus::after { opacity: 1; }
+
+/* ── ⚠︎ 叶子级提示:灰色符号,hover 浮层 ─ */
+.tip { margin-left: 4px; font-size: 11px; color: var(--faint); cursor: help; position: relative; }
+.tip::after {
+  content: attr(data-tip);
+  position: absolute; left: 0; top: calc(100% + 4px); z-index: 10;
+  width: max-content; max-width: 280px;
+  background: var(--ink); color: #f9fafb; font-size: 12px; line-height: 1.6;
+  padding: 6px 10px; border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+  opacity: 0; pointer-events: none; transition: opacity .15s;
+  white-space: normal;
+}
+.tip:hover::after { opacity: 1; }
+
+/* ── 交叉引用 ─────────────────────── */
+.xref { font-size: 11px; color: var(--faint); text-decoration: none; margin-left: 4px; }
+.xref:hover { color: var(--ink); text-decoration: underline; }
+
+/* ── 窄屏:单栏,横向细线分隔 ───────── */
+@media (max-width: 900px) {
+  body { padding: 20px; }
+  .poster { grid-template-columns: 1fr; }
+  .col { padding: 0; }
+  .col + .col {
+    border-left: none;
+    border-top: 1px solid var(--line);
+    margin-top: 20px; padding-top: 20px;
+  }
+}

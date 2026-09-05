@@ -1,0 +1,4 @@
+{
+  "name": "观察者",
+  "detail": "做法:主题维护订阅列表,add / remove / notify 三件套,变化时统一通知"
+}

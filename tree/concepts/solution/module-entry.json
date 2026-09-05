@@ -1,0 +1,4 @@
+{
+  "name": "模块只露统一入口",
+  "detail": "做法:index 文件统一导出,lint 禁止 import 内部文件深路径"
+}

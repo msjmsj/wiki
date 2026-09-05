@@ -1,0 +1,72 @@
+{
+  "id": "c",
+  "title": "C. 协作类问题",
+  "subtitle": "组织协作与长期演进 —— 多人、长周期项目中出现",
+  "leaves": [
+    {
+      "symptom": "多人修改同一文件,合并冲突频繁",
+      "tags": ["ownership"],
+      "keywords": ["conway", "module-owner"]
+    },
+    {
+      "symptom": "方案评审难以达成共识",
+      "tags": ["decision-process"],
+      "keywords": [
+        { "concept": "adr", "note": "评审围绕文档而非口水" }
+      ]
+    },
+    {
+      "symptom": "上下游接口变更互相不知情,联调靠喊",
+      "tags": ["integration"],
+      "keywords": ["api-contract", "cdc"]
+    },
+    {
+      "id": "legacy-code",
+      "symptom": "老代码没人敢动",
+      "tags": ["risk"],
+      "xref": { "target": "#afraid-to-change", "text": "⇢ 另一根源在 A" },
+      "keywords": ["contract-test", "reversible-design", "violations-baseline"]
+    },
+    {
+      "symptom": "依赖和技术栈越拖越旧,升不动了",
+      "tags": ["risk"],
+      "keywords": ["dependency-hygiene", "contract-test"]
+    },
+    {
+      "symptom": "老系统想推倒重写",
+      "tags": ["risk"],
+      "keywords": ["strangler"]
+    },
+    {
+      "symptom": "新功能不知道放哪,全堆进大文件",
+      "tags": ["convention"],
+      "keywords": ["arch-redline", "scaffolding"]
+    },
+    {
+      "symptom": "新人 / AI 上手就破坏结构",
+      "tags": ["convention"],
+      "keywords": ["spec-doc", "ci-enforce"]
+    },
+    {
+      "symptom": "文档写完就过时,没人维护",
+      "tags": ["knowledge"],
+      "keywords": [
+        "docs-as-code",
+        { "concept": "contract-test", "note": "能跑的测试是不会过时的文档" }
+      ]
+    },
+    {
+      "symptom": "核心模块只有一个人懂",
+      "symptomNote": "巴士因子 = 1",
+      "tags": ["knowledge", "ownership"],
+      "keywords": ["pair-rotation", "module-owner", "adr"]
+    },
+    {
+      "symptom": "忘记当初为什么这么做",
+      "tags": ["knowledge"],
+      "keywords": [
+        { "concept": "adr", "note": "记的是推理,不只是结论" }
+      ]
+    }
+  ]
+}

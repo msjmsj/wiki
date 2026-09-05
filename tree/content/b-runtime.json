@@ -1,0 +1,115 @@
+{
+  "id": "b",
+  "title": "B. 运行类问题",
+  "subtitle": "运行结果错误或外部依赖失效 —— 发生在机器层面,与代码组织方式无关",
+  "leaves": [
+    {
+      "symptom": "不知道谁改了数据",
+      "tags": ["mutability"],
+      "keywords": [
+        { "concept": "immutability", "note": "前提:消灭「拿着引用偷偷改」的途径" },
+        { "concept": "ssot", "note": "保证:改也只能改源头" },
+        { "concept": "unidirectional-flow", "note": "直接答案:所有修改收拢到唯一入口,在入口打日志 / 断点即知谁改的" }
+      ]
+    },
+    {
+      "symptom": "多线程 / 异步抢同一份数据",
+      "symptomNote": "竞态",
+      "tags": ["concurrency"],
+      "keywords": [
+        { "concept": "immutability", "note": "共享数据只读,就没有写写冲突" },
+        "message-passing",
+        "lock-discipline"
+      ]
+    },
+    {
+      "symptom": "慢响应后到,覆盖了新数据",
+      "symptomNote": "请求竞速",
+      "tags": ["concurrency"],
+      "keywords": ["cancellation", "debounce"]
+    },
+    {
+      "symptom": "有副本:副本与源头不一致",
+      "tags": ["consistency"],
+      "keywords": ["ttl", "invalidate-first"],
+      "warning": "缓存 = 用一致性换速度。上缓存之前先问:这个场景能不能容忍旧数据?能容忍多久?"
+    },
+    {
+      "symptom": "历史丢了,无法审计回放",
+      "tags": ["auditability"],
+      "keywords": ["event-sourcing", "memento", "activity-log"]
+    },
+    {
+      "symptom": "用户要求撤销 / 重做",
+      "tags": ["auditability"],
+      "keywords": ["command", "memento", "event-sourcing"]
+    },
+    {
+      "symptom": "执行一半挂了,数据半新半旧",
+      "tags": ["atomicity"],
+      "keywords": ["transaction", "compensation", "command", "reconciliation"]
+    },
+    {
+      "symptom": "外部会失败",
+      "tags": ["reliability"],
+      "keywords": ["timeout", "retry", "circuit-breaker", "degradation"]
+    },
+    {
+      "symptom": "外部会重复",
+      "symptomNote": "重复提交 / 重复消费",
+      "tags": ["duplication"],
+      "keywords": ["idempotency", "dedup", "state-machine"]
+    },
+    {
+      "symptom": "外部会变化",
+      "symptomNote": "接口/字段偷偷变,程序静默出错",
+      "tags": ["integration"],
+      "keywords": [
+        "acl",
+        "schema-validation",
+        { "concept": "proxy", "note": "防腐层的常见实现形式" }
+      ]
+    },
+    {
+      "symptom": "外部会丢失",
+      "symptomNote": "异步消息没了没人知道",
+      "tags": ["reliability"],
+      "keywords": ["ack", "redelivery", "dlq", "consumer-idempotency"]
+    },
+    {
+      "symptom": "要实时感知服务端变化,只能高频轮询",
+      "tags": ["performance"],
+      "keywords": ["server-push"]
+    },
+    {
+      "symptom": "一次拉全量数据,又慢又大",
+      "tags": ["performance"],
+      "keywords": ["pagination", "incremental-sync"]
+    },
+    {
+      "symptom": "太频繁,资源吃紧",
+      "tags": ["performance"],
+      "keywords": ["throttle", "debounce", "batching"]
+    },
+    {
+      "symptom": "太慢",
+      "tags": ["performance"],
+      "keywords": [
+        { "concept": "cache", "note": "一致性代价见「副本不一致」条" },
+        "async",
+        "parallel",
+        "index"
+      ]
+    },
+    {
+      "symptom": "存不下 / 怕单点故障",
+      "tags": ["capacity"],
+      "keywords": ["sharding", "replication", "divide-conquer"]
+    },
+    {
+      "symptom": "多实例部署后,定时任务被重复执行",
+      "tags": ["duplication", "concurrency"],
+      "keywords": ["distributed-lock", "leader-election"]
+    }
+  ]
+}

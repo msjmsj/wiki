@@ -1,0 +1,4 @@
+{
+  "name": "不可变",
+  "detail": "编程纪律:改 = 返回新对象,绝不原地改。手段:Object.freeze、Immer、{...obj} 展开拷贝、record/final 字段、入参只读"
+}

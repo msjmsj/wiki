@@ -1,0 +1,4 @@
+{
+  "name": "选主",
+  "detail": "做法:多实例选出一个 leader,只有 leader 执行任务;leader 挂了自动重选"
+}

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>问题 → 方案 分化树</title>
+<!-- 本文件由 tree/render/build.ts 生成,请勿手改;修改内容请编辑 tree/content/ 与 tree/concepts/ 下的 JSON 文件 -->
+<style>
+/* 问题 → 方案 分化树 —— 全部样式
+   设计原则:单色 + 字重区分层级;全屏分栏,细线分隔。
+   构建时由 render/template.ts 读取并内联进单文件 HTML。 */
+
+:root {
+  --ink:   #111827;   /* 主文字(问题表现、标题) */
+  --gray:  #4b5563;   /* 次级文字(方案标签) */
+  --faint: #9ca3af;   /* 辅助说明、箭头、标记 */
+  --line:  #e5e7eb;   /* 分隔线、标签描边 */
+  --hover: #f9fafb;   /* 行 hover */
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 28px 40px 40px;
+  font: 14px/1.7 -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  background: #fff;
+}
+
+/* ── 全屏分栏(细线分隔,无卡片框)───── */
+.poster {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+}
+.col { padding: 0 32px; }
+.col:first-child { padding-left: 0; }
+.col:last-child { padding-right: 0; }
+.col + .col { border-left: 1px solid var(--line); }
+
+/* ── 大类标题:黑色粗线,编辑风格 ───── */
+.col > h2 {
+  margin: 0; padding-bottom: 8px;
+  font-size: 16px; font-weight: 700; letter-spacing: .02em;
+  border-bottom: 2px solid var(--ink);
+}
+.col > .sub {
+  margin: 6px 0 14px;
+  font-size: 12px; color: var(--faint);
+}
+
+/* ── 大类内聚类:性质家族(两级)────── */
+.fam { margin-top: 14px; }
+.fam:first-of-type { margin-top: 4px; }
+.fam > h4 { margin: 0 0 4px; font-size: 12px; font-weight: 400; }
+/* 子性质小类:缩进一级 + 左侧细线 */
+.fam .cluster {
+  margin: 8px 0 0 2px; padding-left: 10px;
+  border-left: 1px solid var(--line);
+}
+.fam .cluster > h5 { margin: 0 0 2px; font-size: 12px; font-weight: 400; }
+
+/* ── 叶子:一行,表现粗体 + 关键字标签 ─ */
+ul.leaves { margin: 0; padding: 0; list-style: none; }
+ul.leaves > li { padding: 4px 8px; border-radius: 4px; line-height: 2; }
+ul.leaves > li:hover { background: var(--hover); }
+
+.sym { font-weight: 600; }
+/* 带补充说明的问题表现:虚线下划线 = 可点击 */
+.sym.more { border-bottom: 1px dashed #d1d5db; padding-bottom: 1px; }
+.sym.more:hover { border-bottom-color: var(--ink); }
+.arrow { color: var(--faint); margin: 0 2px 0 6px; }
+
+/* ── 标签:方案=空心胶囊,问题性质=实心灰块 ── */
+.kw {
+  display: inline-block;
+  margin: 2px 3px 2px 0; padding: 0 8px;
+  font-size: 12px; line-height: 20px; white-space: nowrap;
+  border: 1px solid #d1d5db; border-radius: 999px;
+  color: var(--gray);
+}
+.kw.more:hover { border-color: var(--ink); color: var(--ink); }
+
+.tag {
+  display: inline-block;
+  margin: 2px 3px 2px 0; padding: 0 6px;
+  font-size: 11px; line-height: 18px; white-space: nowrap;
+  background: #f3f4f6; border-radius: 4px;
+  color: var(--gray);
+}
+.tag.more:hover { background: #e5e7eb; color: var(--ink); }
+/* 家族头(根源概念):实心深色,与子类/行内标签拉开层级 */
+.tag.fam {
+  background: var(--ink); color: #f9fafb;
+  padding: 0 8px; font-weight: 600;
+}
+.tag.fam.more:hover { background: #000; color: #fff; }
+
+/* 可点击标签通用机制::focus 弹出解释,点击别处自动消失(纯 CSS,无 JS)*/
+.more { position: relative; cursor: pointer; }
+.more:focus { outline: none; }
+.more::after {
+  content: attr(data-detail);
+  position: absolute; left: 0; top: calc(100% + 4px); z-index: 10;
+  width: max-content; max-width: 260px;
+  background: var(--ink); color: #f9fafb;
+  font-size: 12px; line-height: 1.6;
+  padding: 6px 10px; border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+  opacity: 0; pointer-events: none; transition: opacity .12s;
+  white-space: pre-line;   /* note 与概念 detail 之间的换行生效 */
+  font-weight: 400;        /* 弹层不受宿主(如加粗的表现文字)影响 */
+  text-align: left;
+}
+.more:focus::after { opacity: 1; }
+
+/* ── ⚠︎ 叶子级提示:灰色符号,hover 浮层 ─ */
+.tip { margin-left: 4px; font-size: 11px; color: var(--faint); cursor: help; position: relative; }
+.tip::after {
+  content: attr(data-tip);
+  position: absolute; left: 0; top: calc(100% + 4px); z-index: 10;
+  width: max-content; max-width: 280px;
+  background: var(--ink); color: #f9fafb; font-size: 12px; line-height: 1.6;
+  padding: 6px 10px; border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+  opacity: 0; pointer-events: none; transition: opacity .15s;
+  white-space: normal;
+}
+.tip:hover::after { opacity: 1; }
+
+/* ── 交叉引用 ─────────────────────── */
+.xref { font-size: 11px; color: var(--faint); text-decoration: none; margin-left: 4px; }
+.xref:hover { color: var(--ink); text-decoration: underline; }
+
+/* ── 窄屏:单栏,横向细线分隔 ───────── */
+@media (max-width: 900px) {
+  body { padding: 20px; }
+  .poster { grid-template-columns: 1fr; }
+  .col { padding: 0; }
+  .col + .col {
+    border-left: none;
+    border-top: 1px solid var(--line);
+    margin-top: 20px; padding-top: 20px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="poster">
+
+  <!-- ═══ A. 认知类问题 ═══ -->
+  <section class="col" id="a">
+    <h2>A. 认知类问题</h2>
+    <p class="sub">代码难以理解或修改 —— 影响开发者,与机器运行无关</p>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="识别:理解一件事所需的工作记忆超限。子类:规模复杂度(单元太大)、嵌套复杂度(层级太深)">复杂度</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【复杂度 的一种】
+
+识别:单元过大——函数一屏读不完、文件翻不到头,改之前要研究半小时">规模复杂度</span></h5>
+      <ul class="leaves">
+        <li id="l-a-0"><span class="sym more" tabindex="0" data-detail="长函数、大文件,看半小时才敢改">单个东西太大</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:按「谁会改它」切——一个函数只干一件事(一屏读完),一个文件只装一个领域">拆分</span><span class="kw more" tabindex="0" data-detail="判断法:问「什么变化会动这个模块」,答案多于一个就该拆">单一职责</span><span class="kw more" tabindex="0" data-detail="判断法:接口窄(参数少、调用简单)而实现厚(Ousterhout);反例是每层只顾转发的浅模块">深模块</span></li>
+      </ul>
+      </div>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【复杂度 的一种】
+
+识别:缩进层数深、逻辑呈箭头型,阅读时要在脑中维护调用栈,主路径被挤到屏幕右边">嵌套复杂度</span></h5>
+      <ul class="leaves">
+        <li id="l-a-2"><span class="sym more" tabindex="0" data-detail="if 套 if,主逻辑被挤到屏幕右边">嵌套太深,逻辑呈箭头型</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:异常情况先判断提前 return,主路径保持左对齐;嵌套层数降到一两层">卫语句</span><span class="kw more" tabindex="0" data-detail="做法:按「谁会改它」切——一个函数只干一件事(一屏读完),一个文件只装一个领域">拆分</span></li>
+      </ul>
+      </div>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="识别:改 A 时被迫理解或改动 B。子类按痛的时机分:结构耦合(依赖乱)、变化耦合(变化扩散)、创建耦合(绑死实现)、通信耦合(直连多方)">耦合</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【耦合 的一种】
+
+识别:模块间依赖数量多、方向乱(蜘蛛网),想理解一个模块得先理解一大片">结构耦合</span></h5>
+      <ul class="leaves">
+        <li id="l-a-1"><span class="sym more" tabindex="0" data-detail="依赖像蜘蛛网">东西之间的关系乱</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:固定层级(界面/应用/领域/基础设施),只许上层依赖下层,用依赖边界检查强制">分层</span><span class="kw more" tabindex="0" data-detail="做法:依赖倒置——稳定方定义接口,易变方去实现它,依赖就指向了稳定">依赖方向管理</span><span class="kw more" tabindex="0" data-detail="做法:一个 Facade 类封装子系统的多个内部调用,外部只依赖它">外观模式</span><span class="kw more" tabindex="0" data-detail="做法:index 文件统一导出,lint 禁止 import 内部文件深路径">模块只露统一入口</span></li>
+      </ul>
+      </div>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【耦合 的一种】
+
+识别:一处变化沿依赖扩散到多处,修改半径不可控——改 A 必须同步改 B、C、D">变化耦合</span></h5>
+      <ul class="leaves">
+        <li id="l-a-3"><span class="sym more" tabindex="0" data-detail="霰弹式修改">一处变化要改很多地方</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:先列出「将来可能变的决策」(格式、规则、阈值),每个藏进一个模块,对外只露稳定接口(Parnas)">信息隐藏</span></li>
+      </ul>
+      </div>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【耦合 的一种】
+
+识别:代码直接 new 具体类,编译期绑死实现;换实现要全局搜、全局改">创建耦合</span></h5>
+      <ul class="leaves">
+        <li id="l-a-7"><span class="sym">创建对象写死类名,换实现要全局搜 new</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:一个 makeXxx() 集中所有 new,换实现只改这一处">工厂</span><span class="kw more" tabindex="0" data-detail="做法:依赖从构造函数 / 参数传入,生产传真实现,测试传 mock">依赖注入</span></li>
+      </ul>
+      </div>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【耦合 的一种】
+
+识别:调用方直连所有接收方,「谁要听这个变化」的拓扑写死在代码里,加监听方就要改源头">通信耦合</span></h5>
+      <ul class="leaves">
+        <li id="l-a-8"><span class="sym">一变要通知多方,直接调用缠成网</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:主题维护订阅列表,add / remove / notify 三件套,变化时统一通知">观察者</span><span class="kw more" tabindex="0" data-detail="做法:起一个事件总线(EventEmitter / 消息队列),发布者与订阅者互不知晓">发布订阅</span><span class="kw more" tabindex="0" data-detail="做法:多方互调缠成网时,引入一个中介对象集中协调,各方只跟中介说话(如聊天室、表单联动控制器)">中介者</span><span class="tip" data-tip="代价:数据流不透明、难调试。事件链一长,「谁触发了谁」要靠全局搜索才能还原。">⚠︎</span></li>
+      </ul>
+      </div>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="根源:同一事物存在多份或发生多次——知识的拷贝(代码)、数据的拷贝(缓存/副本)、执行的重复(任务/消息)">复制</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【复制 的一种】
+
+识别:同一事物有多份或发生多次——代码拷贝(改一处要同步改别处)、消息重复投递、任务重复执行">重复</span></h5>
+      <ul class="leaves">
+        <li id="l-a-4"><span class="sym">同一个修改要在多处重复</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="判断法:改 A 时必须同步改 B,就是重复;手段:抽公共函数 / 集中配置 / 查表">DRY</span><span class="kw more" tabindex="0" data-detail="做法:抽出公共逻辑供多处调用,而不是复制粘贴后再各自漂移">抽象复用</span><span class="kw more" tabindex="0" data-detail="原则:你不会需要它——当前用不到的抽象别提前建。与 DRY 互为刹车:经验线是「重复三次再抽象」">YAGNI</span><span class="tip" data-tip="只是「长得像」的代码别硬合并——巧合的重复不是重复,强行抽象会把两个独立演进的东西锁死。">⚠︎</span></li>
+      </ul>
+      </div>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="识别:每加一个新变体都要修改存量代码,而不是新增代码">可扩展性</span></h4>
+    <ul class="leaves">
+        <li id="l-a-5"><span class="sym more" tabindex="0" data-detail="if-else 越接越长">加新功能必须改老代码</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="原则:对扩展开放、对修改关闭。本叶的其余标签(多态/策略/查表/装饰器/中间件/模板方法)都是它的落地手段">开闭原则</span><span class="kw more" tabindex="0" data-detail="做法:定义一个接口,每种情况一个实现类,调用方只面向接口">多态</span><span class="kw more" tabindex="0" data-detail="做法:可互换的算法各自封装成同接口实现,运行时按场景选用">策略模式</span><span class="kw more" tabindex="0" data-detail="做法:if-else 的条件-动作写成 Map / 表,加分支 = 加一行数据">查表驱动</span><span class="kw more" tabindex="0" data-detail="做法:包一层同名接口,前后叠加行为(日志、缓存、鉴权),原对象无感知">装饰器</span><span class="kw more" tabindex="0" data-detail="做法:请求处理做成洋葱式管线(Express / Koa),新环节插进去,主干不动">中间件</span><span class="kw more" tabindex="0" data-detail="做法:基类固定算法骨架,变化点留成钩子方法;新变体 = 新子类填钩子,骨架代码不动">模板方法</span></li>
+    </ul>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="根源:外部世界不受你控制——会失败、会变化、会丢、会重复;与外部打交道,信任必须显式建立、显式校验">边界</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【边界 的一种】
+
+识别:依赖的接口/数据由外部控制,对方的变动不经你同意就到达你的系统">集成演进</span></h5>
+      <ul class="leaves">
+        <li id="l-a-6"><span class="sym">两个接口对不上,又改不了其中一方</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:写一个 Adapter 实现 B 期望的接口,内部转调 A,双方都不用改">适配器</span></li>
+      </ul>
+      </div>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="识别:想单测一个单元,却被迫拖起数据库、网络、全局单例等一堆环境">可测试性</span></h4>
+    <ul class="leaves">
+        <li id="l-a-9"><span class="sym">全局实例到处被 import,测试难写</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:能传参就别用单例——依赖从参数传入,测试时直接换替身">显式注入</span><span class="kw more" tabindex="0" data-detail="做法:必须用全局实例时,集中一处创建,并暴露 reset() 供测试隔离">受控单例</span></li>
+        <li id="l-a-10"><span class="sym">业务逻辑和框架 / IO 缠在一起,没法单测</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:函数式核心 + 命令式外壳——业务逻辑全是纯函数(进数据出数据),IO / 框架挤到薄壳里;核心天然可测">纯函数核心</span><span class="kw more" tabindex="0" data-detail="做法:依赖从构造函数 / 参数传入,生产传真实现,测试传 mock">依赖注入</span></li>
+    </ul>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="识别:一次修改的影响范围无法预估,「改」的期望代价高于「忍」的代价">风险</span></h4>
+    <ul class="leaves">
+        <li id="l-a-11"><span class="sym">改行为必须改代码发版,上线回滚都疼</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:开关外置到配置 / 平台,不发版就能开关功能、灰度放量、秒级回滚">特性开关</span><span class="tip" data-tip="开关是债:长期不清理的 flag 会让代码长出死分支——上线稳定后定期删。">⚠︎</span></li>
+        <li id="afraid-to-change"><span class="sym">不敢修改,担心破坏现有功能</span><a class="xref" href="#legacy-code">⇢ 另一根源在 C</a><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:只为公开接口的行为写测试;内部实现随便重构,测试不用改,接口不变就有兜底">契约测试</span></li>
+    </ul>
+    </div>
+  </section>
+
+  <!-- ═══ B. 运行类问题 ═══ -->
+  <section class="col" id="b">
+    <h2>B. 运行类问题</h2>
+    <p class="sub">运行结果错误或外部依赖失效 —— 发生在机器层面,与代码组织方式无关</p>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="根源:对「过去发生了什么」的认知缺失——当前值从何而来、经历过什么、还能不能回去">可追溯性</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【可追溯性 的一种】
+
+识别:数据可被原地修改,且修改的来源和时机不明,当前值无法信任">可变性</span></h5>
+      <ul class="leaves">
+        <li id="l-b-0"><span class="sym">不知道谁改了数据</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="前提:消灭「拿着引用偷偷改」的途径
+
+编程纪律:改 = 返回新对象,绝不原地改。手段:Object.freeze、Immer、{...obj} 展开拷贝、record/final 字段、入参只读">不可变</span><span class="kw more" tabindex="0" data-detail="保证:改也只能改源头
+
+一份数据只认一个权威副本(如全局 store、数据库),其余都是它的派生或缓存">单一数据源</span><span class="kw more" tabindex="0" data-detail="直接答案:所有修改收拢到唯一入口,在入口打日志 / 断点即知谁改的
+
+做法:action → reducer(纯函数)→ 新 state(Redux 式),数据流向可追踪">单向数据流</span></li>
+      </ul>
+      </div>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【可追溯性 的一种】
+
+识别:事后无法回答「发生了什么、谁干的、之前是什么值」">可审计性</span></h5>
+      <ul class="leaves">
+        <li id="l-b-4"><span class="sym">历史丢了,无法审计回放</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:append-only 事件表,每次变更追加一条;现状 = 从头(或从快照)重放事件">事件溯源</span><span class="kw more" tabindex="0" data-detail="做法:在关键点保存状态快照,可回滚到任一保存点">Memento</span><span class="kw more" tabindex="0" data-detail="做法:append-only 日志表,记「谁 / 何时 / 改了什么 / 前后值」,只增不改">活动日志</span></li>
+        <li id="l-b-5"><span class="sym">用户要求撤销 / 重做</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:把操作封装成命令对象,do / undo 成对——可排队、可记录、可撤销,是补偿动作和事件溯源的天然载体">命令模式</span><span class="kw more" tabindex="0" data-detail="做法:在关键点保存状态快照,可回滚到任一保存点">Memento</span><span class="kw more" tabindex="0" data-detail="做法:append-only 事件表,每次变更追加一条;现状 = 从头(或从快照)重放事件">事件溯源</span></li>
+      </ul>
+      </div>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="根源:操作在时间轴上展开——多个执行流的先后顺序不确定、执行中途可能被打断、快慢不可预期">时序</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【时序 的一种】
+
+识别:多个执行流同时触碰同一资源,结果取决于时序——偶尔错、难复现">并发</span></h5>
+      <ul class="leaves">
+        <li id="l-b-1"><span class="sym more" tabindex="0" data-detail="竞态">多线程 / 异步抢同一份数据</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="共享数据只读,就没有写写冲突
+
+编程纪律:改 = 返回新对象,绝不原地改。手段:Object.freeze、Immer、{...obj} 展开拷贝、record/final 字段、入参只读">不可变</span><span class="kw more" tabindex="0" data-detail="做法:线程间不共享内存,靠发消息传数据(actor / channel / postMessage),同一时刻数据只有一个属主">消息传递</span><span class="kw more" tabindex="0" data-detail="做法:必须共享可变数据时——统一加锁顺序、临界区缩到最小、能用读写锁不用互斥锁">锁纪律</span></li>
+        <li id="l-b-2"><span class="sym more" tabindex="0" data-detail="请求竞速">慢响应后到,覆盖了新数据</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:AbortController 取消旧请求,或给请求编序号只认最新——后到者不得覆盖新数据">竞速取消</span><span class="kw more" tabindex="0" data-detail="做法:等调用停下来再执行一次,如输入停 300ms 才触发搜索">防抖</span></li>
+      </ul>
+      </div>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【时序 的一种】
+
+识别:一个逻辑操作包含多个物理步骤,中途失败留下半成品状态">原子性</span></h5>
+      <ul class="leaves">
+        <li id="l-b-6"><span class="sym">执行一半挂了,数据半新半旧</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:数据库事务(ACID)包住一组写,要么全成要么全不成;跨服务用 saga 拆成本地事务">事务</span><span class="kw more" tabindex="0" data-detail="做法:每个正向操作预定义反向操作(创建↔删除、扣款↔退款),失败时按逆序执行">补偿动作</span><span class="kw more" tabindex="0" data-detail="做法:把操作封装成命令对象,do / undo 成对——可排队、可记录、可撤销,是补偿动作和事件溯源的天然载体">命令模式</span><span class="kw more" tabindex="0" data-detail="做法:定时任务比对上下游数据,发现差异告警,自动或人工修复">定时对账</span></li>
+      </ul>
+      </div>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="根源:同一事物存在多份或发生多次——知识的拷贝(代码)、数据的拷贝(缓存/副本)、执行的重复(任务/消息)">复制</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【复制 的一种】
+
+识别:同一数据存在多份(源头、缓存、副本),彼此可能给出不同答案">一致性</span></h5>
+      <ul class="leaves">
+        <li id="l-b-3"><span class="sym">有副本:副本与源头不一致</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:缓存写入时设过期时间(如 30min),到期回源重取">TTL</span><span class="kw more" tabindex="0" data-detail="做法:cache-aside——读 miss 回源并回填;写时先改库再删缓存,下次读自然拿到新数据">失效优先于更新</span><span class="tip" data-tip="缓存 = 用一致性换速度。上缓存之前先问:这个场景能不能容忍旧数据?能容忍多久?">⚠︎</span></li>
+      </ul>
+      </div>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【复制 的一种】
+
+识别:同一事物有多份或发生多次——代码拷贝(改一处要同步改别处)、消息重复投递、任务重复执行">重复</span></h5>
+      <ul class="leaves">
+        <li id="l-b-8"><span class="sym more" tabindex="0" data-detail="重复提交 / 重复消费">外部会重复</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:请求带唯一 ID,服务端用去重表 / 唯一约束挡重复;写操作用 upsert 或状态机校验">幂等</span><span class="kw more" tabindex="0" data-detail="做法:凭唯一 ID(请求 ID / 消息 ID)在入口判重,见过就直接丢弃">去重</span><span class="kw more" tabindex="0" data-detail="做法:显式定义状态集合与合法迁移(如 待支付→已支付→已发货),非法或重复的流转直接拒绝">状态机</span></li>
+        <li id="l-b-16"><span class="sym">多实例部署后,定时任务被重复执行</span><span class="tag more" tabindex="0" data-detail="【时序 的一种】
+
+识别:多个执行流同时触碰同一资源,结果取决于时序——偶尔错、难复现">并发</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:Redis / ZK 抢锁,抢到才执行;锁必须带过期时间,防持锁者猝死成死锁">分布式锁</span><span class="kw more" tabindex="0" data-detail="做法:多实例选出一个 leader,只有 leader 执行任务;leader 挂了自动重选">选主</span></li>
+      </ul>
+      </div>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="根源:外部世界不受你控制——会失败、会变化、会丢、会重复;与外部打交道,信任必须显式建立、显式校验">边界</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【边界 的一种】
+
+识别:外部依赖不按承诺工作——会失败、会丢、会慢、会重复">可靠性</span></h5>
+      <ul class="leaves">
+        <li id="l-b-7"><span class="sym">外部会失败</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:给每个外部调用设上限(连接、读取分开算),默认宁短勿长">超时</span><span class="kw more" tabindex="0" data-detail="做法:指数退避 + 随机抖动(1s、2s、4s+jitter),设最大次数,且只重试幂等操作">重试</span><span class="kw more" tabindex="0" data-detail="做法:窗口内失败率超阈值就开路、快速失败;冷却一段时间后半开试探,成功则闭合">熔断</span><span class="kw more" tabindex="0" data-detail="做法:主路不通走备用——返回缓存 / 默认值 / 简化结果,预先想好每条的备用是什么">降级</span></li>
+        <li id="l-b-10"><span class="sym more" tabindex="0" data-detail="异步消息没了没人知道">外部会丢失</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:先处理完再 ack;中途崩溃没 ack,消息视为未消费">确认 ack</span><span class="kw more" tabindex="0" data-detail="做法:未 ack 的消息超过可见性超时后,由 broker 自动重新投递">重投</span><span class="kw more" tabindex="0" data-detail="做法:重试超上限的消息转入 DLQ,告警 + 人工排查兜底">死信队列</span><span class="kw more" tabindex="0" data-detail="做法:按消息 ID 记录已处理过的,重复投递直接跳过——重投必然带来重复,必须兜住">消费端幂等</span></li>
+      </ul>
+      </div>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【边界 的一种】
+
+识别:依赖的接口/数据由外部控制,对方的变动不经你同意就到达你的系统">集成演进</span></h5>
+      <ul class="leaves">
+        <li id="l-b-9"><span class="sym more" tabindex="0" data-detail="接口/字段偷偷变,程序静默出错">外部会变化</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:adapter 目录集中所有翻译函数,外部模型在这里转成本系统模型,内部代码不见外部结构">防腐层</span><span class="kw more" tabindex="0" data-detail="做法:边界处用 zod / JSON Schema 校验入站数据,不合法立刻报错">Schema 校验</span><span class="kw more" tabindex="0" data-detail="防腐层的常见实现形式
+
+做法:包一层同接口的代理对象,转发前后插手——缓存、校验、翻译、惰性加载都塞在这层">代理</span></li>
+      </ul>
+      </div>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="根源:吞吐、容量、延迟都有物理上限——平时无感,超限那一刻问题才暴露">资源有限</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【资源有限 的一种】
+
+识别:响应时间或资源占用超过可接受阈值,用户或账单先感知到">性能</span></h5>
+      <ul class="leaves">
+        <li id="l-b-11"><span class="sym">要实时感知服务端变化,只能高频轮询</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:SSE(单向文本流)/ WebSocket(双向)/ 长轮询——变化来了服务端主动推,替代高频轮询">服务端推送</span></li>
+        <li id="l-b-12"><span class="sym">一次拉全量数据,又慢又大</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:用游标(cursor)而非偏移量(offset)——并发写入时 offset 分页会漏数据 / 重复数据">游标分页</span><span class="kw more" tabindex="0" data-detail="做法:只传变化部分,带版本号 / 时间戳断点续传;全量只在首次或修复时用">增量同步</span></li>
+        <li id="l-b-13"><span class="sym">太频繁,资源吃紧</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:固定窗口内只执行一次(如每 100ms),窗口内的多余调用直接丢">节流</span><span class="kw more" tabindex="0" data-detail="做法:等调用停下来再执行一次,如输入停 300ms 才触发搜索">防抖</span><span class="kw more" tabindex="0" data-detail="做法:开窗口攒请求(按时间或数量触发),攒够一次 flush,摊薄单次开销">批处理</span></li>
+        <li id="l-b-14"><span class="sym">太慢</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="一致性代价见「副本不一致」条
+
+做法:结果按 key 存起来,下次直接取,避免重复计算 / 查询">缓存</span><span class="kw more" tabindex="0" data-detail="做法:慢操作丢给队列 / 后台任务,主路径先返回,结果稍后通知">异步</span><span class="kw more" tabindex="0" data-detail="做法:互相独立的任务同时跑——Promise.all / 线程池 / 多进程">并行</span><span class="kw more" tabindex="0" data-detail="做法:数据库加索引、内存预建 Map,把全量扫描变成 O(1) 查找">索引</span></li>
+      </ul>
+      </div>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【资源有限 的一种】
+
+识别:单机装不下数据 / 扛不住流量,或一台宕机全站停摆">容量与可用性</span></h5>
+      <ul class="leaves">
+        <li id="l-b-15"><span class="sym">存不下 / 怕单点故障</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:按键哈希(或一致性哈希)把数据路由到不同机器,每台只存一部分">分片</span><span class="kw more" tabindex="0" data-detail="做法:主从复制——主写从读,主机宕机切从机">副本</span><span class="kw more" tabindex="0" data-detail="做法:拆—算—合(MapReduce 思想),小问题可并行求解,最后合并结果">分治</span></li>
+      </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ C. 协作类问题 ═══ -->
+  <section class="col" id="c">
+    <h2>C. 协作类问题</h2>
+    <p class="sub">组织协作与长期演进 —— 多人、长周期项目中出现</p>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="识别:代码或决策没有明确负责人——人人都可改 = 没人负责">归属</span></h4>
+    <ul class="leaves">
+        <li id="l-c-0"><span class="sym">多人修改同一文件,合并冲突频繁</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:系统结构会长成沟通结构——先按团队边界划模块,跨团队的接口当 API 契约管理">Conway</span><span class="kw more" tabindex="0" data-detail="做法:CODEOWNERS 文件声明每块代码的归属,改动自动指派对应负责人评审">一个模块一个 owner</span></li>
+    </ul>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="识别:决策靠临场争论产出,没有记录、没有评判标准,同样的问题反复吵">决策流程</span></h4>
+    <ul class="leaves">
+        <li id="l-c-1"><span class="sym">方案评审难以达成共识</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="评审围绕文档而非口水
+
+做法:docs/adr/ 下每个决策一个文件、编号递增,模板:背景 / 选项 / 结论 / 理由">ADR</span></li>
+    </ul>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="根源:外部世界不受你控制——会失败、会变化、会丢、会重复;与外部打交道,信任必须显式建立、显式校验">边界</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【边界 的一种】
+
+识别:依赖的接口/数据由外部控制,对方的变动不经你同意就到达你的系统">集成演进</span></h5>
+      <ul class="leaves">
+        <li id="l-c-2"><span class="sym">上下游接口变更互相不知情,联调靠喊</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:OpenAPI / Proto 文件即协议,变更必须先改契约,代码与文档由契约生成">API 契约</span><span class="kw more" tabindex="0" data-detail="做法:消费者写下「我要用什么字段」(如 pact),提供方发版前必须跑过所有消费者的契约,破了发不出去">消费者驱动契约</span></li>
+      </ul>
+      </div>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="识别:一次修改的影响范围无法预估,「改」的期望代价高于「忍」的代价">风险</span></h4>
+    <ul class="leaves">
+        <li id="legacy-code"><span class="sym">老代码没人敢动</span><a class="xref" href="#afraid-to-change">⇢ 另一根源在 A</a><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:只为公开接口的行为写测试;内部实现随便重构,测试不用改,接口不变就有兜底">契约测试</span><span class="kw more" tabindex="0" data-detail="做法:特性开关、可回滚的发布、只增不改的数据库迁移——让「改错了」的代价足够小">可逆设计</span><span class="kw more" tabindex="0" data-detail="做法:现存违规列成清单文件,CI 只拦新增(只减不增),存量逐步清零">known-violations 基线</span></li>
+        <li id="l-c-4"><span class="sym">依赖和技术栈越拖越旧,升不动了</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:dependabot / renovate 自动小额常升;升级是日常活动,攒出断层才危险">依赖保鲜</span><span class="kw more" tabindex="0" data-detail="做法:只为公开接口的行为写测试;内部实现随便重构,测试不用改,接口不变就有兜底">契约测试</span></li>
+        <li id="l-c-5"><span class="sym">老系统想推倒重写</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:不推倒重写——新功能进新系统,老功能逐个迁移,老系统被慢慢「绞杀」到死">绞杀者模式</span></li>
+    </ul>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="识别:结构靠口头约定和自觉维持,新成员 / 新代码一来就被突破">约定执行</span></h4>
+    <ul class="leaves">
+        <li id="l-c-6"><span class="sym">新功能不知道放哪,全堆进大文件</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:依赖边界写成自动化检查(eslint boundaries / dependency-cruiser),提交即拦截">架构红线</span><span class="kw more" tabindex="0" data-detail="做法:plop / hygen 模板一键生成新模块,目录、命名、测试位置自动落对——让正路比野路快">脚手架</span></li>
+        <li id="l-c-7"><span class="sym">新人 / AI 上手就破坏结构</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:项目根放规范文档 + AI 上下文文件(如 AGENTS.md / CLAUDE.md),新人和 AI 上手先读">规范文档</span><span class="kw more" tabindex="0" data-detail="做法:红线做成 lint / CI 自动化检查,保存或提交即报错——约束靠工具,不靠自觉">CI 强制</span></li>
+    </ul>
+    </div>
+
+    <div class="fam">
+    <h4><span class="tag fam more" tabindex="0" data-detail="识别:「为什么这样做」只存在于当事人脑中,人走即失传">知识管理</span></h4>
+    <ul class="leaves">
+        <li id="l-c-8"><span class="sym">文档写完就过时,没人维护</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:文档放代码库(Markdown),随 PR 一起评审更新;过时文档视为 bug">文档即代码</span><span class="kw more" tabindex="0" data-detail="能跑的测试是不会过时的文档
+
+做法:只为公开接口的行为写测试;内部实现随便重构,测试不用改,接口不变就有兜底">契约测试</span></li>
+        <li id="l-c-9"><span class="sym more" tabindex="0" data-detail="巴士因子 = 1">核心模块只有一个人懂</span><span class="tag more" tabindex="0" data-detail="识别:代码或决策没有明确负责人——人人都可改 = 没人负责">归属</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:关键模块至少两人熟——结对写、互相评审、定期轮岗,巴士因子拉到 ≥2">结对与轮值</span><span class="kw more" tabindex="0" data-detail="做法:CODEOWNERS 文件声明每块代码的归属,改动自动指派对应负责人评审">一个模块一个 owner</span><span class="kw more" tabindex="0" data-detail="做法:docs/adr/ 下每个决策一个文件、编号递增,模板:背景 / 选项 / 结论 / 理由">ADR</span></li>
+        <li id="l-c-10"><span class="sym">忘记当初为什么这么做</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="记的是推理,不只是结论
+
+做法:docs/adr/ 下每个决策一个文件、编号递增,模板:背景 / 选项 / 结论 / 理由">ADR</span></li>
+    </ul>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

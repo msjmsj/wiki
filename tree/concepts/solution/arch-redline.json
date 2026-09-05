@@ -1,0 +1,4 @@
+{
+  "name": "架构红线",
+  "detail": "做法:依赖边界写成自动化检查(eslint boundaries / dependency-cruiser),提交即拦截"
+}
