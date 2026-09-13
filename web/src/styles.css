@@ -164,8 +164,6 @@ ul.leaves > li:hover { background: var(--hover); }
 }
 .m-detail { margin: 10px 0 0; font-size: 13px; color: var(--gray); }
 .m-doc { margin-top: 12px; }
-.m-doc p { margin: 10px 0; font-size: 13px; line-height: 1.9; color: #1f2937; }
-.m-label { font-weight: 700; color: var(--ink); margin-right: 6px; }
 .m-backs {
   margin-top: 14px; border-top: 1px solid var(--line); padding-top: 10px;
   font-size: 12px; color: var(--faint);
@@ -173,6 +171,27 @@ ul.leaves > li:hover { background: var(--hover); }
 }
 .m-backs a { color: var(--gray); text-decoration: none; }
 .m-backs a:hover { color: var(--ink); text-decoration: underline; }
+
+/* Markdown 详细讲解区 */
+.md { font-size: 13px; line-height: 1.8; color: #1f2937; }
+.md h3 {
+  margin: 14px 0 4px; font-size: 13px; font-weight: 700; color: var(--ink);
+}
+.md h3:first-child { margin-top: 4px; }
+.md p { margin: 6px 0; }
+.md ul, .md ol { margin: 6px 0; padding-left: 1.4em; }
+.md li { margin: 2px 0; }
+.md code {
+  font: 12px/1.5 ui-monospace, Consolas, monospace;
+  background: #f3f4f6; border-radius: 4px; padding: 1px 5px;
+}
+.md pre {
+  background: #f9fafb; border: 1px solid var(--line); border-radius: 6px;
+  padding: 8px 12px; overflow: auto;
+}
+.md pre code { background: none; padding: 0; }
+.md .mermaid { text-align: center; margin: 10px 0; }
+.md .mermaid svg { max-width: 100%; height: auto; }
 
 /* ── 视图切换 ─────────────────────── */
 .views {

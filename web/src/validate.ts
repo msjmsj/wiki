@@ -2,7 +2,6 @@ import type { Category, ConceptEntry, ConceptKind, Keyword } from "./types.ts";
 import { kwId } from "./util.ts";
 
 const DETAIL_MAX = 80; // 速记提示长度上限(字)
-const DOC_LABEL_RE = /^「?[^:：\n]{1,12}[:：]/; // doc 段落须以「小节标签:」开头
 
 /** 内容规范的机械检查(写进 README 的规则必须能落到工具里) */
 function lintConcept(
@@ -28,11 +27,17 @@ function lintConcept(
       }
     }
   }
-  c.doc.split("\n\n").forEach((p, i) => {
-    if (!DOC_LABEL_RE.test(p)) {
-      warnings.push(`${id}: doc 第 ${i + 1} 段缺少「标签:」小节锚点`);
-    }
-  });
+  // doc 是 Markdown:必须以 ### 小节开头;不得残留旧式「标签:」段落(未迁移)
+  if (!c.doc.startsWith("### ")) {
+    warnings.push(`${id}: doc 须以「### 小节标题」开头`);
+  }
+  // 剥掉代码块和小节标题后再查旧式段落(避免误报 mermaid 图里的「节点:文本」)
+  const prose = c.doc
+    .replaceAll(/```[\s\S]*?```/g, "")
+    .replaceAll(/^### .*$/gm, "");
+  if (/^「?[^:：\n]{1,12}[:：]/m.test(prose)) {
+    warnings.push(`${id}: doc 含有旧式「标签:」段落,应改为 ### 小节`);
+  }
 }
 
 /** 与 tree/render/loader.ts 同规则的数据校验;错误抛出,警告进 console */

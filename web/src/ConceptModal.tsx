@@ -1,6 +1,7 @@
 import { createContext, useEffect } from "react";
-import type { ConceptEntry, SolutionLevel } from "./types";
-import type { Usage } from "./util";
+import type { ConceptEntry, SolutionLevel } from "./types.ts";
+import type { Usage } from "./util.ts";
+import { Markdown } from "./Markdown.tsx";
 
 /** Tag 点击时打开概念卡片 */
 export const ShowConceptContext = createContext<
@@ -12,18 +13,6 @@ const LEVEL_LABEL: Record<SolutionLevel, string> = {
   pattern: "设计模式",
   mechanism: "机制",
 };
-
-/** 段首「标签:」加粗为小节锚点,如「定义:」「常见错误:」 */
-function DocParagraph({ text }: { text: string }) {
-  const m = /^([^:：\n]{1,10})[:：]([\s\S]*)$/.exec(text);
-  if (!m) return <p>{text}</p>;
-  return (
-    <p>
-      <span className="m-label">{m[1]}</span>
-      {m[2]}
-    </p>
-  );
-}
 
 /**
  * 概念卡片(Modal):简明讲解 + 详细讲解(doc)+ 出现于哪些叶子(可跳转)。
@@ -75,9 +64,7 @@ export function ConceptModal({
         <p className="m-detail">{c.detail}</p>
         {c.doc && (
           <div className="m-doc">
-            {c.doc.split("\n\n").map((p, i) => (
-              <DocParagraph key={i} text={p} />
-            ))}
+            <Markdown text={c.doc} />
           </div>
         )}
         {usage && usage.length > 0 && (
