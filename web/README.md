@@ -6,11 +6,13 @@
 ## 开发
 
 ```bash
-cd web
-npm install        # 首次
-npm run dev        # 开发服务器(默认 http://localhost:5173)
-npm run build      # 产物到 dist/
-npm run typecheck  # tsc 类型检查
+# 统一 CLI(仓库根目录)
+./wiki dev                     # 开发服务器(默认 http://localhost:5173)
+./wiki check                   # 数据校验(机械规范检查)
+./wiki build                   # 校验 + 生产构建到 web/dist/
+./wiki new concept|leaf ...    # 内容脚手架
+./wiki typecheck               # tsc 类型检查
+# 也兼容:cd web && npm run dev|check|build|new
 ```
 
 ## 结构

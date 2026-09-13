@@ -78,9 +78,9 @@ group/subgroup 必须在 `web/src/patterns-layout.ts` 的注册表里(创建型/
 ## 机械校验(不靠自觉)
 
 ```bash
-cd web
-npm run check    # 校验全部 JSON(已内置进 npm run build)
-npm run dev      # 预览 http://localhost:5173
+./wiki check    # 校验全部 JSON(已内置进 ./wiki build)
+./wiki dev       # 预览 http://localhost:5173
+./wiki new ...   # 脚手架(见上)
 ```
 
 校验内容:结构错误(缺字段/概念不存在/类型错/parent 环)→ 失败;

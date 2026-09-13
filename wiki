@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# 分化树统一 CLI(git bash):./wiki new|check|dev|build|typecheck
+node "$(dirname "$0")/web/cli.ts" "$@"

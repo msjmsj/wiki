@@ -3,23 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "check": "node check.ts",
-    "new": "node new.ts",
-    "build": "node check.ts && vite build",
+    "wiki": "node cli.ts",
+    "dev": "node cli.ts dev",
+    "check": "node cli.ts check",
+    "new": "node cli.ts new",
+    "build": "node cli.ts build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@types/markdown-it": "^14.2.0",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.1",
-    "markdown-it": "^15.0.2",
-    "mermaid": "^12.0.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "typescript": "^7.0.2",
-    "vite": "^8.3.0"
+    "typecheck": "node cli.ts typecheck"
   }
 }
