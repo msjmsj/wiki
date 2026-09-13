@@ -134,7 +134,7 @@ ul.leaves > li:hover { background: var(--hover); }
 /* ── 概念侧栏(Drawer,非模态)───────── */
 .drawer {
   position: fixed; top: 0; right: 0; bottom: 0; z-index: 50;
-  width: min(480px, 94vw);
+  width: min(720px, 92vw);
   background: #fff; border-left: 1px solid var(--line);
   box-shadow: -8px 0 24px rgba(0,0,0,.10);
   padding: 18px 22px 24px; overflow-y: auto;
