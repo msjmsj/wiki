@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import type { ConceptEntry, Keyword } from "./types";
 import { kwId, kwNote } from "./util";
-import { ShowConceptContext } from "./ConceptDrawer.ts";
+import { ShowConceptContext } from "./ConceptDrawer.tsx";
 
 /**
  * 概念标签胶囊:点击打开概念卡片(简明讲解 + 详细讲解 + 出处链接)。

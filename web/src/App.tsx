@@ -4,7 +4,7 @@ import { categories, concepts } from "./data";
 import { buildUsage } from "./util";
 import { TreeView } from "./TreeView";
 import { PatternsView } from "./PatternsView";
-import { ConceptDrawer, ShowConceptContext } from "./ConceptDrawer.ts";
+import { ConceptDrawer, ShowConceptContext } from "./ConceptDrawer.tsx";
 
 const usage = buildUsage(categories);
 
