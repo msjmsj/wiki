@@ -4,6 +4,7 @@
   "level": "pattern",
   "gof": {
     "group": "扩展模式",
-    "subgroup": "通信与边界"
+    "subgroup": "通信与边界",
+    "intent": "把请求处理做成可插拔的管线环节"
   }
 }

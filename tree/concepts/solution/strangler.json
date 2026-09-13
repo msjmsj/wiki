@@ -4,6 +4,7 @@
   "level": "pattern",
   "gof": {
     "group": "扩展模式",
-    "subgroup": "演进与溯源"
+    "subgroup": "演进与溯源",
+    "intent": "逐步替换遗留系统,不推倒重写"
   }
 }

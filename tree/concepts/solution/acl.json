@@ -4,6 +4,7 @@
   "level": "pattern",
   "gof": {
     "group": "扩展模式",
-    "subgroup": "通信与边界"
+    "subgroup": "通信与边界",
+    "intent": "在外部系统与内部模型之间设一道翻译防线"
   }
 }

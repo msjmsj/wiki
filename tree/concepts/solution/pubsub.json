@@ -4,6 +4,7 @@
   "level": "pattern",
   "gof": {
     "group": "扩展模式",
-    "subgroup": "通信与边界"
+    "subgroup": "通信与边界",
+    "intent": "发布者与订阅者经事件中心彻底解耦"
   }
 }

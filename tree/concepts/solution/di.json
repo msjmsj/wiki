@@ -4,6 +4,7 @@
   "level": "pattern",
   "gof": {
     "group": "扩展模式",
-    "subgroup": "架构与装配"
+    "subgroup": "架构与装配",
+    "intent": "依赖由外部传入而非自建,实现可替换、可测试"
   }
 }

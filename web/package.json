@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "check": "node check.ts",
+    "new": "node new.ts",
     "build": "node check.ts && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"

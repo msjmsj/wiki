@@ -13,6 +13,9 @@ function lintConcept(
   if (c.detail.length > DETAIL_MAX) {
     warnings.push(`${id}: detail 超长(${c.detail.length} 字,上限 ${DETAIL_MAX})`);
   }
+  if (c.detail.startsWith("TODO") || (c.gof?.intent ?? "").startsWith("TODO")) {
+    warnings.push(`${id}: 含脚手架 TODO 占位,记得补写`);
+  }
   if (!c.doc) return;
   if (c.doc.includes(c.detail)) {
     warnings.push(`${id}: doc 完整复读了 detail`);

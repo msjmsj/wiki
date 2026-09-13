@@ -37,7 +37,7 @@ Concept(概念)   → tree/concepts/<kind>/<id>.json
 }
 ```
 
-**加新概念**:在 `tree/concepts/` 对应目录建 `<id>.json`:
+**手动加新概念**:在 `tree/concepts/` 对应目录建 `<id>.json`:
 
 ```jsonc
 // concepts/solution/adapter.json

@@ -4,6 +4,7 @@
   "level": "pattern",
   "gof": {
     "group": "扩展模式",
-    "subgroup": "演进与溯源"
+    "subgroup": "演进与溯源",
+    "intent": "存事件流而非当前状态,现状由重放得出"
   }
 }
