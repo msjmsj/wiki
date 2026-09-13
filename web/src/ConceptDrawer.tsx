@@ -85,6 +85,16 @@ export function ConceptDrawer({
           ))}
         </div>
       )}
+      {c.refs && c.refs.length > 0 && (
+        <div className="m-refs">
+          参考:
+          {c.refs.map((r, i) => (
+            <a key={i} href={r.url} target="_blank" rel="noreferrer">
+              {r.label} ↗
+            </a>
+          ))}
+        </div>
+      )}
     </aside>
   );
 }

@@ -6,5 +6,11 @@
     "subgroup": "状态管理",
     "intent": "对象随内部状态改变行为,看上去像改变了类",
     "aka": "状态 State"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/state"
+    }
+  ]
 }

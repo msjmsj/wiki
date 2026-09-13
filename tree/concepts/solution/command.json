@@ -5,5 +5,11 @@
     "group": "行为型",
     "subgroup": "请求对象化",
     "intent": "把请求封装成对象:可参数化、排队、记录、撤销"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/command"
+    }
+  ]
 }

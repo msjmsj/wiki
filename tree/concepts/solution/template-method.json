@@ -5,5 +5,11 @@
     "group": "行为型",
     "subgroup": "算法替换",
     "intent": "固定算法骨架,变化步骤延迟到子类实现"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/template-method"
+    }
+  ]
 }

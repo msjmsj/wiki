@@ -5,5 +5,11 @@
     "group": "行为型",
     "subgroup": "遍历访问",
     "intent": "在不改元素类的前提下,为元素结构定义新操作"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/visitor"
+    }
+  ]
 }

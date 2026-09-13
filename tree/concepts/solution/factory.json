@@ -6,5 +6,11 @@
     "subgroup": "选实现",
     "intent": "把实例化推迟到子类 / 集中点,使用方不直接 new",
     "aka": "工厂方法 Factory Method"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/factory-method"
+    }
+  ]
 }

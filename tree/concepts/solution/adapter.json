@@ -5,5 +5,11 @@
     "group": "结构型",
     "subgroup": "接口对接",
     "intent": "把一个类的接口转换成客户期望的另一个接口"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/adapter"
+    }
+  ]
 }

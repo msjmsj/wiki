@@ -5,5 +5,11 @@
     "group": "结构型",
     "subgroup": "间接访问",
     "intent": "为对象提供代理,控制对它的访问(缓存/校验/翻译/惰性加载)"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/proxy"
+    }
+  ]
 }

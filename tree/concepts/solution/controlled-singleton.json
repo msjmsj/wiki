@@ -6,5 +6,11 @@
     "subgroup": "数量控制",
     "intent": "保证一个类只有一个实例,并提供受控访问点",
     "aka": "单例 Singleton"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/singleton"
+    }
+  ]
 }

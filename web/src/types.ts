@@ -27,8 +27,10 @@ export interface Concept {
    * 缺省时:带 gof 字段 → pattern,否则 → mechanism。
    */
   level?: SolutionLevel;
-  /** 详细讲解(可选):多段落用 \n\n 分隔,点击概念卡片中展示 */
+  /** 详细讲解(可选):同名 .md 文件,Markdown 格式,概念卡片中展示 */
   doc?: string;
+  /** 延伸阅读链接(可选),如 [{ "label": "RefactoringGuru", "url": "…" }] */
+  refs?: { label: string; url: string }[];
 }
 
 export interface ConceptEntry extends Concept {

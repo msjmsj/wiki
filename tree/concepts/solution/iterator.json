@@ -5,5 +5,11 @@
     "group": "行为型",
     "subgroup": "遍历访问",
     "intent": "顺序访问聚合元素而不暴露内部结构"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/iterator"
+    }
+  ]
 }

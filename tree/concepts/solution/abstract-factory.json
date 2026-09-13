@@ -5,5 +5,11 @@
     "group": "创建型",
     "subgroup": "选实现",
     "intent": "创建一族相关对象而不指定具体类"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/abstract-factory"
+    }
+  ]
 }

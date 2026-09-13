@@ -5,5 +5,11 @@
     "group": "结构型",
     "subgroup": "树形组合",
     "intent": "把对象组成树表示部分-整体,统一单个与组合"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/composite"
+    }
+  ]
 }

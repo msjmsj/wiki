@@ -5,5 +5,11 @@
     "group": "创建型",
     "subgroup": "组装过程",
     "intent": "把复杂对象的构建过程拆成步骤,同样过程可建不同表示"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/builder"
+    }
+  ]
 }

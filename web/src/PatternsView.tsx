@@ -74,6 +74,12 @@ export function PatternsView({
           })}
         </section>
       ))}
+      <p className="refs-line">
+        参考文档:{" "}
+        <a href="https://refactoringguru.cn/design-patterns" target="_blank" rel="noreferrer">
+          RefactoringGuru 设计模式(中文)↗
+        </a>
+      </p>
     </div>
   );
 }

@@ -5,5 +5,11 @@
     "group": "行为型",
     "subgroup": "请求对象化",
     "intent": "多个对象都有机会处理请求,发送者与接收者解耦"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/chain-of-responsibility"
+    }
+  ]
 }

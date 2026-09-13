@@ -18,6 +18,9 @@ function lintConcept(
   if (c.doc?.includes("TODO")) {
     warnings.push(`${id}: doc 含 TODO 占位小节,记得补写`);
   }
+  c.refs?.forEach((r, i) => {
+    if (!r.label || !r.url) warnings.push(`${id}: refs[${i}] 缺 label 或 url`);
+  });
   if (!c.doc) return;
   if (c.doc.includes(c.detail)) {
     warnings.push(`${id}: doc 完整复读了 detail`);

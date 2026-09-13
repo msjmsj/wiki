@@ -5,5 +5,11 @@
     "group": "行为型",
     "subgroup": "通信解耦",
     "intent": "用中介对象集中封装多方交互,各方互不知晓"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/mediator"
+    }
+  ]
 }

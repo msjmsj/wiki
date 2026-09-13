@@ -5,5 +5,11 @@
     "group": "结构型",
     "subgroup": "共享减重",
     "intent": "通过共享支撑大量细粒度对象"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/flyweight"
+    }
+  ]
 }

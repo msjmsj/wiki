@@ -173,6 +173,13 @@ ul.leaves > li:hover { background: var(--hover); }
 }
 .m-backs a { color: var(--gray); text-decoration: none; }
 .m-backs a:hover { color: var(--ink); text-decoration: underline; }
+.m-refs { margin-top: 10px; font-size: 12px; color: var(--faint); }
+.m-refs a { color: var(--gray); text-decoration: none; margin-left: 8px; }
+.m-refs a:hover { color: var(--ink); text-decoration: underline; }
+
+/* 模式页底部参考文档行 */
+.refs-line { grid-column: 1 / -1; margin-top: 8px; font-size: 12px; color: var(--faint); }
+.refs-line a { color: var(--gray); }
 
 /* Markdown 详细讲解区 */
 .md { font-size: 13px; line-height: 1.8; color: #1f2937; }

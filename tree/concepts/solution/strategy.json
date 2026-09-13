@@ -5,5 +5,11 @@
     "group": "行为型",
     "subgroup": "算法替换",
     "intent": "定义一族可互换的算法,运行时选择"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/strategy"
+    }
+  ]
 }

@@ -5,5 +5,11 @@
     "group": "创建型",
     "subgroup": "复制",
     "intent": "以已有对象为模具,通过拷贝创建新对象"
-  }
+  },
+  "refs": [
+    {
+      "label": "RefactoringGuru 详解",
+      "url": "https://refactoringguru.cn/design-patterns/prototype"
+    }
+  ]
 }
