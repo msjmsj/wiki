@@ -61,8 +61,12 @@ switch (cmd) {
   }
   case "typecheck": {
     const { spawnSync } = await import("node:child_process");
-    const bin = process.platform === "win32" ? "tsc.cmd" : "tsc";
-    const r = spawnSync(bin, ["--noEmit"], { stdio: "inherit" });
+    // 直接调 node 跑 tsc 入口,避免 Windows 上 spawn .cmd 需要 shell 的问题
+    const r = spawnSync(
+      process.execPath,
+      ["node_modules/typescript/bin/tsc", "--noEmit"],
+      { stdio: "inherit" },
+    );
     process.exit(r.status ?? 1);
   }
   default:

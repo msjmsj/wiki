@@ -131,22 +131,24 @@ ul.leaves > li:hover { background: var(--hover); }
 .xref { font-size: 11px; color: var(--faint); text-decoration: none; margin-left: 4px; }
 .xref:hover { color: var(--ink); text-decoration: underline; }
 
-/* ── 概念卡片(Modal)─────────────── */
-.overlay {
-  position: fixed; inset: 0; z-index: 50;
-  background: rgba(17,24,39,.32);
-  display: flex; align-items: flex-start; justify-content: center;
-  padding: 8vh 16px;
+/* ── 概念侧栏(Drawer,非模态)───────── */
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 50;
+  width: min(480px, 94vw);
+  background: #fff; border-left: 1px solid var(--line);
+  box-shadow: -8px 0 24px rgba(0,0,0,.10);
+  padding: 18px 22px 24px; overflow-y: auto;
+  animation: drawer-in .16s ease-out;
 }
-.modal {
-  background: #fff; width: 100%; max-width: 560px;
-  max-height: 76vh; overflow: auto;
-  border-radius: 10px; padding: 18px 22px 16px;
-  box-shadow: 0 8px 30px rgba(0,0,0,.18);
+@keyframes drawer-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: none; opacity: 1; }
 }
 .m-head {
   display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
   padding-bottom: 10px; border-bottom: 1px solid var(--line);
+  position: sticky; top: -18px; background: #fff;
+  padding-top: 4px;
 }
 .m-name { font-size: 16px; font-weight: 700; margin-right: 2px; }
 .m-badge {

@@ -2,7 +2,7 @@ import { useContext } from "react";
 import type { ConceptEntry } from "./types.ts";
 import type { Usage } from "./util.ts";
 import { PATTERN_SECTIONS, PATTERN_KEYS } from "./patterns-layout.ts";
-import { ShowConceptContext } from "./ConceptModal.tsx";
+import { ShowConceptContext } from "./ConceptDrawer.tsx";
 
 /**
  * 设计模式视图:分组完全由概念文件的 gof.group / gof.subgroup 自描述,

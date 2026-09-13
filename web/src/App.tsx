@@ -4,7 +4,7 @@ import { categories, concepts } from "./data";
 import { buildUsage } from "./util";
 import { TreeView } from "./TreeView";
 import { PatternsView } from "./PatternsView";
-import { ConceptModal, ShowConceptContext } from "./ConceptModal";
+import { ConceptDrawer, ShowConceptContext } from "./ConceptDrawer.ts";
 
 const usage = buildUsage(categories);
 
@@ -53,7 +53,7 @@ export default function App() {
         />
       </div>
       {active && (
-        <ConceptModal
+        <ConceptDrawer
           id={active.id}
           note={active.note}
           concepts={concepts}
