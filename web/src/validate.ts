@@ -15,6 +15,9 @@ function lintConcept(
   if (c.detail.startsWith("TODO") || (c.gof?.intent ?? "").startsWith("TODO")) {
     warnings.push(`${id}: 含脚手架 TODO 占位,记得补写`);
   }
+  if (c.doc?.includes("TODO")) {
+    warnings.push(`${id}: doc 含 TODO 占位小节,记得补写`);
+  }
   if (!c.doc) return;
   if (c.doc.includes(c.detail)) {
     warnings.push(`${id}: doc 完整复读了 detail`);

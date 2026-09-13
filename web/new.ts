@@ -16,10 +16,17 @@ import { PATTERN_KEYS } from "./src/patterns-layout.ts";
 import type { Category, ConceptEntry, ConceptKind, Leaf } from "./src/types.ts";
 
 const [cmd, ...rest] = process.argv.slice(2);
+// 解析 --key value;--with-doc 这类布尔 flag 后直接跟另一个 flag 或结尾时取 "true"
 const flags: Record<string, string> = {};
-for (let i = 0; i < rest.length; i += 2) {
+for (let i = 0; i < rest.length; i++) {
   const k = rest[i];
-  if (k?.startsWith("--")) flags[k.slice(2)] = rest[i + 1] ?? "";
+  if (!k?.startsWith("--")) continue;
+  const next = rest[i + 1];
+  if (next === undefined || next.startsWith("--")) flags[k.slice(2)] = "true";
+  else {
+    flags[k.slice(2)] = next;
+    i++;
+  }
 }
 
 const die = (msg: string): never => {
@@ -67,6 +74,11 @@ if (cmd === "concept") {
       };
       c.level ??= "pattern";
     }
+  }
+  // doc(Markdown 详细讲解)两类概念都可用;--with-doc 给骨架,--doc 直接给内容
+  if (flags["with-doc"] || flags.doc !== undefined) {
+    c.doc =
+      flags.doc ?? "### 为什么\n\nTODO\n\n### 做法\n\nTODO\n\n### 常见错误\n\nTODO";
   }
   writeJson(join(treeDir, "concepts", kind, `${id}.json`), c);
   console.log(`✓ 已创建 tree/concepts/${kind}/${id}.json`);
