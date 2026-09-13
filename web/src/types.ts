@@ -9,11 +9,20 @@ export interface GofInfo {
   aka?: string;
 }
 
+export type SolutionLevel = "principle" | "pattern" | "mechanism";
+
 export interface Concept {
   name: string;
   detail: string;
   parent?: string;
   gof?: GofInfo;
+  /**
+   * 方案层级(仅 solution 概念):原则 / 设计模式 / 机制。
+   * 缺省时:带 gof 字段 → pattern,否则 → mechanism。
+   */
+  level?: SolutionLevel;
+  /** 详细讲解(可选):多段落用 \n\n 分隔,点击概念卡片中展示 */
+  doc?: string;
 }
 
 export interface ConceptEntry extends Concept {

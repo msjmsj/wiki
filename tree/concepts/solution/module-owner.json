@@ -1,4 +1,5 @@
 {
   "name": "一个模块一个 owner",
-  "detail": "做法:CODEOWNERS 文件声明每块代码的归属,改动自动指派对应负责人评审"
+  "detail": "做法:CODEOWNERS 文件声明每块代码的归属,改动自动指派对应负责人评审",
+  "level": "principle"
 }

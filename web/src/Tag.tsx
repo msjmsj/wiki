@@ -1,9 +1,11 @@
+import { useContext } from "react";
 import type { ConceptEntry, Keyword } from "./types";
 import { kwId, kwNote } from "./util";
+import { ShowConceptContext } from "./ConceptModal";
 
 /**
- * 概念标签胶囊:点击(聚焦)弹出解释,点别处消失(纯 CSS)。
- * 弹层 = 叶子 note(本处角色,可选)+ 父概念归属(可选)+ 概念 detail。
+ * 概念标签胶囊:点击打开概念卡片(简明讲解 + 详细讲解 + 出处链接)。
+ * 样式:问题=实心灰块;方案按层级分——原则=空心细边,模式=深色粗边,机制=浅灰实心。
  */
 export function Tag({
   kw,
@@ -14,17 +16,30 @@ export function Tag({
   concepts: Record<string, ConceptEntry>;
   cls: "tag" | "kw" | "tag fam";
 }) {
+  const show = useContext(ShowConceptContext);
   const id = kwId(kw);
   const note = kwNote(kw);
   const c = concepts[id];
   if (!c) throw new Error(`概念未定义:${id}`);
-  const parts: string[] = [];
-  if (note) parts.push(note);
-  if (c.parent && concepts[c.parent])
-    parts.push(`【${concepts[c.parent].name} 的一种】`);
-  parts.push(c.detail);
+
+  const level =
+    c.kind === "solution"
+      ? (c.level ?? (c.gof ? "pattern" : "mechanism"))
+      : undefined;
+
   return (
-    <span className={`${cls} more`} tabIndex={0} data-detail={parts.join("\n\n")}>
+    <span
+      className={`${cls}${level ? ` ${level}` : ""}`}
+      role="button"
+      tabIndex={0}
+      onClick={(e) => {
+        e.stopPropagation();
+        show(id, note);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") show(id, note);
+      }}
+    >
       {c.name}
     </span>
   );

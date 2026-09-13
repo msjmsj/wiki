@@ -1,4 +1,5 @@
 {
   "name": "事件溯源",
-  "detail": "做法:append-only 事件表,每次变更追加一条;现状 = 从头(或从快照)重放事件"
+  "detail": "做法:append-only 事件表,每次变更追加一条;现状 = 从头(或从快照)重放事件",
+  "level": "pattern"
 }

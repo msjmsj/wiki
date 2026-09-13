@@ -1,4 +1,5 @@
 {
   "name": "发布订阅",
-  "detail": "做法:起一个事件总线(EventEmitter / 消息队列),发布者与订阅者互不知晓"
+  "detail": "做法:起一个事件总线(EventEmitter / 消息队列),发布者与订阅者互不知晓",
+  "level": "pattern"
 }

@@ -70,7 +70,14 @@ ul.leaves > li:hover { background: var(--hover); }
   border: 1px solid #d1d5db; border-radius: 999px;
   color: var(--gray);
 }
-.kw.more:hover { border-color: var(--ink); color: var(--ink); }
+.kw.more:hover, .kw:hover { border-color: var(--ink); color: var(--ink); }
+
+/* 方案层级:原则=空心细边(默认)/ 设计模式=深色粗边加粗 / 机制=浅灰实心 */
+.kw, .tag { cursor: pointer; }
+.kw.pattern { border-color: var(--ink); color: var(--ink); font-weight: 600; }
+.kw.pattern:hover { background: var(--ink); color: #fff; }
+.kw.mechanism { background: #f3f4f6; border-color: transparent; }
+.kw.mechanism:hover { background: #e5e7eb; color: var(--ink); }
 
 .tag {
   display: inline-block;
@@ -79,13 +86,14 @@ ul.leaves > li:hover { background: var(--hover); }
   background: #f3f4f6; border-radius: 4px;
   color: var(--gray);
 }
-.tag.more:hover { background: #e5e7eb; color: var(--ink); }
+.tag.more:hover, .tag:hover { background: #e5e7eb; color: var(--ink); }
 /* 家族头(根源概念):实心深色,与子类/行内标签拉开层级 */
 .tag.fam {
   background: var(--ink); color: #f9fafb;
   padding: 0 8px; font-weight: 600;
 }
 .tag.fam.more:hover { background: #000; color: #fff; }
+.tag.fam:hover { background: #000; color: #fff; }
 
 /* 可点击标签通用机制::focus 弹出解释,点击别处自动消失(纯 CSS,无 JS)*/
 .more { position: relative; cursor: pointer; }
@@ -122,6 +130,49 @@ ul.leaves > li:hover { background: var(--hover); }
 /* ── 交叉引用 ─────────────────────── */
 .xref { font-size: 11px; color: var(--faint); text-decoration: none; margin-left: 4px; }
 .xref:hover { color: var(--ink); text-decoration: underline; }
+
+/* ── 概念卡片(Modal)─────────────── */
+.overlay {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(17,24,39,.32);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 8vh 16px;
+}
+.modal {
+  background: #fff; width: 100%; max-width: 560px;
+  max-height: 76vh; overflow: auto;
+  border-radius: 10px; padding: 18px 22px 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.18);
+}
+.m-head {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding-bottom: 10px; border-bottom: 1px solid var(--line);
+}
+.m-name { font-size: 16px; font-weight: 700; margin-right: 2px; }
+.m-badge {
+  font-size: 11px; color: var(--gray);
+  background: #f3f4f6; border-radius: 4px; padding: 0 6px; line-height: 18px;
+}
+.m-close {
+  margin-left: auto; background: none; border: none;
+  font-size: 18px; color: var(--faint); cursor: pointer; padding: 0 4px;
+}
+.m-close:hover { color: var(--ink); }
+.m-note {
+  margin: 10px 0 0; padding: 4px 10px; font-size: 13px; color: var(--gray);
+  background: #f9fafb; border-left: 2px solid var(--line);
+}
+.m-detail { margin: 10px 0 0; font-size: 13px; color: var(--gray); }
+.m-doc { margin-top: 12px; }
+.m-doc p { margin: 10px 0; font-size: 13px; line-height: 1.9; color: #1f2937; }
+.m-label { font-weight: 700; color: var(--ink); margin-right: 6px; }
+.m-backs {
+  margin-top: 14px; border-top: 1px solid var(--line); padding-top: 10px;
+  font-size: 12px; color: var(--faint);
+  display: flex; flex-wrap: wrap; gap: 4px 10px;
+}
+.m-backs a { color: var(--gray); text-decoration: none; }
+.m-backs a:hover { color: var(--ink); text-decoration: underline; }
 
 /* ── 视图切换 ─────────────────────── */
 .views {

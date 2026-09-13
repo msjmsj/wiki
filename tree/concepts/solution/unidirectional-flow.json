@@ -1,4 +1,5 @@
 {
   "name": "单向数据流",
-  "detail": "做法:action → reducer(纯函数)→ 新 state(Redux 式),数据流向可追踪"
+  "detail": "做法:action → reducer(纯函数)→ 新 state(Redux 式),数据流向可追踪",
+  "level": "principle"
 }

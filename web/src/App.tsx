@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import { categories, concepts } from "./data";
 import { buildUsage } from "./util";
 import { TreeView } from "./TreeView";
 import { PatternsView } from "./PatternsView";
+import { ConceptModal, ShowConceptContext } from "./ConceptModal";
 
 const usage = buildUsage(categories);
 
@@ -14,15 +16,21 @@ const VIEWS: { key: ViewKey; label: string }[] = [
 
 export default function App() {
   const [view, setView] = useState<ViewKey>("tree");
+  const [active, setActive] = useState<{ id: string; note?: string } | null>(null);
 
   // 两个视图都挂载,显隐由 body[data-view] 的 CSS 控制:
-  // 页内锚点跳转(#legacy-code 等)因此始终有效,无需等重渲染
+  // 页内锚点跳转(#legacy-code 等)因此始终有效
   useEffect(() => {
     document.body.dataset.view = view;
   }, [view]);
 
+  // 跳回树视图:flushSync 确保 DOM 显隐先更新,之后浏览器再处理锚点滚动
+  const jumpToTree = () => flushSync(() => setView("tree"));
+
   return (
-    <>
+    <ShowConceptContext.Provider
+      value={(id, note) => setActive({ id, note })}
+    >
       <nav className="views">
         {VIEWS.map((v) => (
           <button
@@ -41,9 +49,19 @@ export default function App() {
         <PatternsView
           concepts={concepts}
           usage={usage}
-          onJumpToTree={() => setView("tree")}
+          onJumpToTree={jumpToTree}
         />
       </div>
-    </>
+      {active && (
+        <ConceptModal
+          id={active.id}
+          note={active.note}
+          concepts={concepts}
+          usage={usage[active.id]}
+          onClose={() => setActive(null)}
+          onJumpToTree={jumpToTree}
+        />
+      )}
+    </ShowConceptContext.Provider>
   );
 }
