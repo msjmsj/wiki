@@ -194,14 +194,22 @@ body[data-view="tree"] .view-patterns { display: none; }
 body[data-view="patterns"] .view-tree { display: none; }
 
 /* ── 设计模式视图 ─────────────────── */
+/* 四个板块(GoF 三类 + 扩展模式),宽屏四列 */
+.view-patterns .poster { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 1400px) {
+  .view-patterns .poster { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  .view-patterns .poster { grid-template-columns: 1fr; }
+}
+
 .psub { margin: 14px 0 4px; }
 .psub .tag.fam { font-size: 12px; }
 ul.pats { margin: 0; padding: 0; list-style: none; }
 .pat { padding: 4px 0; font-size: 13px; }
-/* 模式名:加粗 + 虚线下划线 = 可点击看做法 */
-.pname { font-weight: 600; }
-.pname.more { border-bottom: 1px dashed #d1d5db; padding-bottom: 1px; }
-.pname.more:hover { border-bottom-color: var(--ink); }
+/* 模式名:加粗 + 虚线下划线 = 可点击打开概念卡片 */
+.pname { font-weight: 600; cursor: pointer; border-bottom: 1px dashed #d1d5db; padding-bottom: 1px; }
+.pname:hover { border-bottom-color: var(--ink); }
 .pname .aka { font-weight: 400; color: var(--faint); font-size: 11px; }
 .intent { color: var(--gray); font-size: 12px; }
 .back { color: var(--faint); font-size: 11px; text-decoration: none; margin-left: 4px; }

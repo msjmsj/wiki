@@ -7,6 +7,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validate } from "./src/validate.ts";
+import { PLACED_PATTERN_IDS } from "./src/patterns-layout.ts";
 import type { Category, ConceptEntry, ConceptKind } from "./src/types.ts";
 
 const treeDir = fileURLToPath(new URL("../tree/", import.meta.url));
@@ -28,6 +29,17 @@ for (const kind of ["problem", "solution"] as ConceptKind[]) {
 }
 
 validate(categories, concepts);
+
+// 布局完整性:任何 level=pattern / 带 gof 的概念都必须排入设计模式视图
+const unplaced = Object.keys(concepts).filter(
+  (id) =>
+    (concepts[id].gof || concepts[id].level === "pattern") &&
+    !PLACED_PATTERN_IDS.has(id),
+);
+if (unplaced.length) {
+  console.warn(`⚠︎ 模式概念未排入布局:${unplaced.join(", ")}`);
+}
+
 console.log(
   `✓ 数据校验通过(${categories.length} 个大类,${categories.reduce((n, c) => n + c.leaves.length, 0)} 片叶子,${Object.keys(concepts).length} 个概念)`,
 );
