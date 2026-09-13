@@ -29,7 +29,7 @@
     },
     {
       "symptom": "依赖和技术栈越拖越旧,升不动了",
-      "tags": ["risk"],
+      "tags": ["risk", "entropy"],
       "keywords": ["dependency-hygiene", "contract-test"]
     },
     {

@@ -421,22 +421,27 @@ ul.leaves > li:hover { background: var(--hover); }
     <h4><span class="tag fam more" tabindex="0" data-detail="识别:一次修改的影响范围无法预估,「改」的期望代价高于「忍」的代价">风险</span></h4>
     <ul class="leaves">
         <li id="legacy-code"><span class="sym">老代码没人敢动</span><a class="xref" href="#afraid-to-change">⇢ 另一根源在 A</a><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:只为公开接口的行为写测试;内部实现随便重构,测试不用改,接口不变就有兜底">契约测试</span><span class="kw more" tabindex="0" data-detail="做法:特性开关、可回滚的发布、只增不改的数据库迁移——让「改错了」的代价足够小">可逆设计</span><span class="kw more" tabindex="0" data-detail="做法:现存违规列成清单文件,CI 只拦新增(只减不增),存量逐步清零">known-violations 基线</span></li>
-        <li id="l-c-4"><span class="sym">依赖和技术栈越拖越旧,升不动了</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:dependabot / renovate 自动小额常升;升级是日常活动,攒出断层才危险">依赖保鲜</span><span class="kw more" tabindex="0" data-detail="做法:只为公开接口的行为写测试;内部实现随便重构,测试不用改,接口不变就有兜底">契约测试</span></li>
+        <li id="l-c-4"><span class="sym">依赖和技术栈越拖越旧,升不动了</span><span class="tag more" tabindex="0" data-detail="根源:没有持续投入,结构与知识随时间自然衰减——约定被突破、文档过时、设计意图失传、依赖腐旧。守住架构 = 持续做功对抗熵增,不是一次性动作">熵增</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:dependabot / renovate 自动小额常升;升级是日常活动,攒出断层才危险">依赖保鲜</span><span class="kw more" tabindex="0" data-detail="做法:只为公开接口的行为写测试;内部实现随便重构,测试不用改,接口不变就有兜底">契约测试</span></li>
         <li id="l-c-5"><span class="sym">老系统想推倒重写</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:不推倒重写——新功能进新系统,老功能逐个迁移,老系统被慢慢「绞杀」到死">绞杀者模式</span></li>
     </ul>
     </div>
 
     <div class="fam">
-    <h4><span class="tag fam more" tabindex="0" data-detail="识别:结构靠口头约定和自觉维持,新成员 / 新代码一来就被突破">约定执行</span></h4>
-    <ul class="leaves">
+    <h4><span class="tag fam more" tabindex="0" data-detail="根源:没有持续投入,结构与知识随时间自然衰减——约定被突破、文档过时、设计意图失传、依赖腐旧。守住架构 = 持续做功对抗熵增,不是一次性动作">熵增</span></h4>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【熵增 的一种】
+
+识别:结构靠口头约定和自觉维持,新成员 / 新代码一来就被突破">约定执行</span></h5>
+      <ul class="leaves">
         <li id="l-c-6"><span class="sym">新功能不知道放哪,全堆进大文件</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:依赖边界写成自动化检查(eslint boundaries / dependency-cruiser),提交即拦截">架构红线</span><span class="kw more" tabindex="0" data-detail="做法:plop / hygen 模板一键生成新模块,目录、命名、测试位置自动落对——让正路比野路快">脚手架</span></li>
         <li id="l-c-7"><span class="sym">新人 / AI 上手就破坏结构</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:项目根放规范文档 + AI 上下文文件(如 AGENTS.md / CLAUDE.md),新人和 AI 上手先读">规范文档</span><span class="kw more" tabindex="0" data-detail="做法:红线做成 lint / CI 自动化检查,保存或提交即报错——约束靠工具,不靠自觉">CI 强制</span></li>
-    </ul>
-    </div>
+      </ul>
+      </div>
+      <div class="cluster">
+      <h5><span class="tag more" tabindex="0" data-detail="【熵增 的一种】
 
-    <div class="fam">
-    <h4><span class="tag fam more" tabindex="0" data-detail="识别:「为什么这样做」只存在于当事人脑中,人走即失传">知识管理</span></h4>
-    <ul class="leaves">
+识别:「为什么这样做」只存在于当事人脑中,人走即失传">知识管理</span></h5>
+      <ul class="leaves">
         <li id="l-c-8"><span class="sym">文档写完就过时,没人维护</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="做法:文档放代码库(Markdown),随 PR 一起评审更新;过时文档视为 bug">文档即代码</span><span class="kw more" tabindex="0" data-detail="能跑的测试是不会过时的文档
 
 做法:只为公开接口的行为写测试;内部实现随便重构,测试不用改,接口不变就有兜底">契约测试</span></li>
@@ -444,7 +449,8 @@ ul.leaves > li:hover { background: var(--hover); }
         <li id="l-c-10"><span class="sym">忘记当初为什么这么做</span><span class="arrow">→</span><span class="kw more" tabindex="0" data-detail="记的是推理,不只是结论
 
 做法:docs/adr/ 下每个决策一个文件、编号递增,模板:背景 / 选项 / 结论 / 理由">ADR</span></li>
-    </ul>
+      </ul>
+      </div>
     </div>
   </section>
 
