@@ -1,5 +1,5 @@
 /** Node 端共享数据加载(check.ts / new.ts 共用) */
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Category, ConceptEntry, ConceptKind } from "./src/types.ts";
@@ -27,6 +27,9 @@ export function loadAll(): {
     for (const f of readdirSync(dir).filter((f) => f.endsWith(".json"))) {
       const id = f.replace(/\.json$/, "");
       concepts[id] = { ...readJson<object>(join(dir, f)), kind } as ConceptEntry;
+      // 同名 .md 文件 = 详细讲解(Markdown,支持 mermaid)
+      const mdPath = join(dir, `${id}.md`);
+      if (existsSync(mdPath)) concepts[id].doc = readFileSync(mdPath, "utf8").trim();
     }
   }
   return { categories, concepts };

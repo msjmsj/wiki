@@ -2,7 +2,6 @@
   "name": "纯函数核心",
   "detail": "做法:函数式核心 + 命令式外壳——业务逻辑全是纯函数(进数据出数据),IO / 框架挤到薄壳里;核心天然可测",
   "level": "pattern",
-  "doc": "### 出处\n\nGary Bernhardt 的「Functional Core, Imperative Shell」。\n\n### 为什么\n\n纯函数不需要 mock 任何东西就能测——给输入、断言输出。可测性不是测出来的,是拆出来的。\n\n### 怎么分\n\n业务规则往核心推;数据库、网络、时钟、随机数挤到壳里;核心不 import 任何 IO 库。\n\n### 判断法\n\n核心里出现一个 new Date() 或 fetch(),就是边界漏了。",
   "gof": {
     "group": "扩展模式",
     "subgroup": "架构与装配",

@@ -1,6 +1,5 @@
 {
   "name": "不可变",
   "detail": "编程纪律:改 = 返回新对象,绝不原地改。手段:Object.freeze、Immer、{...obj} 展开拷贝、record/final 字段、入参只读",
-  "level": "principle",
-  "doc": "### 为什么\n\n可共享又可改的数据,是「不知道谁改了」的总根源。不可变把这种可能物理删除:要改只能造新值,旧值永远可信,引用随便传。\n\n### 代价\n\n频繁全量拷贝大对象有开销——持久化数据结构(structural sharing)把成本降到接近 O(log n)。\n\n### 边界\n\n它是纪律不是模式,靠 review 和 lint 维持。它消灭「暗改」,但「谁改的、何时改的」还需要单向数据流收拢入口。"
+  "level": "principle"
 }

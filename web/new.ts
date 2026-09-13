@@ -75,17 +75,23 @@ if (cmd === "concept") {
       c.level ??= "pattern";
     }
   }
-  // doc(Markdown 详细讲解)两类概念都可用;--with-doc 给骨架,--doc 直接给内容
-  if (flags["with-doc"] || flags.doc !== undefined) {
-    c.doc =
-      flags.doc ?? "### 为什么\n\nTODO\n\n### 做法\n\nTODO\n\n### 常见错误\n\nTODO";
+  // 详细讲解是同名 .md 文件(Markdown):--with-doc 生成小节骨架,--doc 给定内容
+  const docContent = flags.doc
+    ? flags.doc
+    : flags["with-doc"]
+      ? "### 为什么\n\nTODO\n\n### 做法\n\nTODO\n\n### 常见错误\n\nTODO\n"
+      : undefined;
+  if (docContent !== undefined) {
+    writeFileSync(
+      join(treeDir, "concepts", kind, `${id}.md`),
+      docContent.endsWith("\n") ? docContent : docContent + "\n",
+      "utf8",
+    );
   }
+  const entry = { ...(c as object), kind, ...(docContent ? { doc: docContent } : {}) } as ConceptEntry;
   writeJson(join(treeDir, "concepts", kind, `${id}.json`), c);
-  console.log(`✓ 已创建 tree/concepts/${kind}/${id}.json`);
-  validate(categories, {
-    ...concepts,
-    [id]: { ...(c as object), kind } as ConceptEntry,
-  });
+  console.log(`✓ 已创建 tree/concepts/${kind}/${id}.json${docContent ? " + .md" : ""}`);
+  validate(categories, { ...concepts, [id]: entry });
   console.log("✓ 校验通过。下一步:在叶子里引用它,并补 detail / doc");
 } else if (cmd === "leaf") {
   const catId = flags.cat ?? die("--cat 必填(大类 id:a / b / c)");
