@@ -4,7 +4,7 @@ import type {
   ConceptKind,
   Keyword,
   Leaf,
-} from "./types";
+} from "./types.ts";
 
 export const kwId = (kw: Keyword): string =>
   typeof kw === "string" ? kw : kw.concept;

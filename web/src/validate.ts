@@ -1,5 +1,36 @@
-import type { Category, ConceptEntry, ConceptKind, Keyword } from "./types";
-import { kwId } from "./util";
+import type { Category, ConceptEntry, ConceptKind, Keyword } from "./types.ts";
+import { kwId } from "./util.ts";
+
+const DETAIL_MAX = 80; // 速记提示长度上限(字)
+const DOC_LABEL_RE = /^「?[^:：\n]{1,12}[:：]/; // doc 段落须以「小节标签:」开头
+
+/** 内容规范的机械检查(写进 README 的规则必须能落到工具里) */
+function lintConcept(
+  id: string,
+  c: ConceptEntry,
+  warnings: string[],
+): void {
+  if (c.detail.length > DETAIL_MAX) {
+    warnings.push(`${id}: detail 超长(${c.detail.length} 字,上限 ${DETAIL_MAX})`);
+  }
+  if (!c.doc) return;
+  if (c.doc.includes(c.detail)) {
+    warnings.push(`${id}: doc 完整复读了 detail`);
+  } else {
+    // 句子级复读检测:detail 分句后,超过 12 字的句子不得在 doc 中原文出现
+    for (const seg of c.detail.split(/[。;]/)) {
+      const s = seg.trim();
+      if (s.length >= 12 && c.doc.includes(s)) {
+        warnings.push(`${id}: doc 复读 detail 的句子「${s.slice(0, 16)}…」`);
+      }
+    }
+  }
+  c.doc.split("\n\n").forEach((p, i) => {
+    if (!DOC_LABEL_RE.test(p)) {
+      warnings.push(`${id}: doc 第 ${i + 1} 段缺少「标签:」小节锚点`);
+    }
+  });
+}
 
 /** 与 tree/render/loader.ts 同规则的数据校验;错误抛出,警告进 console */
 export function validate(
@@ -24,6 +55,8 @@ export function validate(
   }
 
   const used = new Set<string>();
+  const warnings: string[] = [];
+  for (const [id, c] of Object.entries(concepts)) lintConcept(id, c, warnings);
   for (const cat of categories) {
     cat.leaves.forEach((leaf, i) => {
       const where = `${cat.id} 第 ${i + 1} 片叶子`;
@@ -56,5 +89,8 @@ export function validate(
   const unused = Object.keys(concepts).filter(
     (id) => !used.has(id) && !concepts[id].gof,
   );
-  if (unused.length) console.warn(`⚠︎ 未被引用的概念:${unused.join(", ")}`);
+  if (unused.length) warnings.push(`未被引用的概念:${unused.join(", ")}`);
+  if (warnings.length) {
+    console.warn(`内容规范检查:\n${warnings.map((w) => `  ⚠︎ ${w}`).join("\n")}`);
+  }
 }

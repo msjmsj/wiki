@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "check": "node check.ts",
+    "build": "node check.ts && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },
