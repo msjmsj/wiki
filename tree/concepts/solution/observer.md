@@ -44,6 +44,21 @@ sequenceDiagram
   站->>面板B: 通知(新数据)
 ```
 
+### 代码
+
+```python
+class WeatherStation:                # 主题
+    def __init__(self): self._subs = []
+    def attach(self, o): self._subs.append(o)    # 登记
+    def detach(self, o): self._subs.remove(o)    # 退订
+    def changed(self, data):                     # 状态变化
+        for o in self._subs:
+            o.notify(data)                       # 逐个通知
+
+class Panel:                         # 观察者
+    def notify(self, data): self.redraw(data)
+```
+
 ### 为什么有效
 
 底层原理是依赖倒置——气象站依赖的是「能收通知」这个抽象约定,而不是任何具体面板。

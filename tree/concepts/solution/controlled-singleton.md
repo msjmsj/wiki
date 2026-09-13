@@ -17,6 +17,23 @@ graph TD
   测试基座 -->|每个用例前重置| 唯一实例
 ```
 
+### 代码
+
+```python
+class Config:
+    _instance = None
+
+    @classmethod
+    def instance(cls):               # 唯一访问点,集中创建
+        if cls._instance is None:
+            cls._instance = cls._load()
+        return cls._instance
+
+    @classmethod
+    def reset(cls):                  # 重置口:每个测试用例前归零
+        cls._instance = None
+```
+
 ### 为什么有效
 
 单例真正的价值只有「全局可及」;受控的价值是「可替换、可重置」。

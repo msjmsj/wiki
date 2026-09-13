@@ -26,6 +26,22 @@ sequenceDiagram
   建造者-->>调用方: 完整且已校验的报表
 ```
 
+### 代码
+
+```python
+class ReportBuilder:
+    def __init__(self): self._kw = {}
+    def title(self, v):  self._kw["title"] = v; return self   # 链式:返回自己
+    def footer(self, v): self._kw["footer"] = v; return self
+
+    def build(self):
+        if "title" not in self._kw:
+            raise ValueError("缺标题")        # 产出前统一校验
+        return Report(**self._kw)            # 之后不可变、半成品不外泄
+
+report = ReportBuilder().title("月度报表").footer("机密").build()
+```
+
 ### 为什么有效
 
 参数有名字——设标题(「你好」)比第五个位置的 null 清楚一百倍;必填与可选分明;校验集中在产出那一刻;产出的对象可以做成不可变的。

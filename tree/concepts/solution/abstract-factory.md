@@ -28,6 +28,22 @@ classDiagram
   深色工厂 ..> 深色输入框
 ```
 
+### 代码
+
+```python
+class LightFactory:              # 一套主题一个工厂
+    def button(self): return LightButton()
+    def input(self):  return LightInput()
+
+class DarkFactory:
+    def button(self): return DarkButton()
+    def input(self):  return DarkInput()
+
+def render_ui(factory):          # 使用方只认「套件工厂」接口
+    factory.button()             # 拿到哪套工厂,产出必然全套配套
+    factory.input()
+```
+
 ### 为什么有效
 
 配套约束从「靠人记住」变成「由类型系统保证」:整套替换只换一个工厂,不可能混用——不配套的组合在编译期就被堵死了。

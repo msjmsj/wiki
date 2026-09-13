@@ -23,6 +23,19 @@ classDiagram
   按钮工厂 ..> 按钮 : 集中创建
 ```
 
+### 代码
+
+```python
+def create_button(theme):        # 工厂:创建决策集中在这一处
+    if theme == "light":
+        return RoundButton()     # 换实现只改这里
+    return SquareButton()
+
+class Panel:                     # 使用方:只见接口,不见具体类
+    def __init__(self, theme):
+        self.button = create_button(theme)   # 不再出现 new RoundButton()
+```
+
 ### 为什么有效
 
 创建点从「散布在多处」收成「单点」——换实现只改工厂一处。使用方依赖抽象接口,编译期不再绑死具体类,这正是创建耦合的解药。

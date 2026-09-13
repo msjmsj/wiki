@@ -19,6 +19,21 @@ sequenceDiagram
   调用方->>调用方: 只改差异字段
 ```
 
+### 代码
+
+```python
+import copy
+
+template = load_report_template()   # 昂贵的初始化只做一次
+
+report = copy.deepcopy(template)    # 克隆:带全部预设
+report.title = "9 月报表"           # 只改差异部分
+
+# 陷阱:copy.copy 是浅拷贝——引用字段仍然共享,改了会互相污染
+bad = copy.copy(template)
+bad.rows.append(...)                # 连 template.rows 也变了!
+```
+
 ### 为什么有效
 
 克隆是内存级复制,绕过昂贵的初始化路径;样品本身可以携带状态,「印哪种」运行期才决定,比写死类型灵活。
