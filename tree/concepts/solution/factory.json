@@ -1,4 +1,8 @@
 {
   "name": "工厂",
-  "detail": "做法:一个 makeXxx() 集中所有 new,换实现只改这一处"
+  "detail": "做法:一个 makeXxx() 集中所有 new,换实现只改这一处",
+  "gof": {
+    "intent": "把实例化推迟到子类 / 集中点,使用方不直接 new",
+    "aka": "工厂方法 Factory Method"
+  }
 }

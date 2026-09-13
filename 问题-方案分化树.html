@@ -131,6 +131,39 @@ ul.leaves > li:hover { background: var(--hover); }
 .xref { font-size: 11px; color: var(--faint); text-decoration: none; margin-left: 4px; }
 .xref:hover { color: var(--ink); text-decoration: underline; }
 
+/* ── 视图切换 ─────────────────────── */
+.views {
+  display: flex; margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.views button {
+  background: none; border: none; margin-bottom: -1px;
+  padding: 6px 14px; font: inherit; font-size: 13px;
+  color: var(--faint); cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.views button:hover { color: var(--ink); }
+.views button.active {
+  color: var(--ink); font-weight: 600;
+  border-bottom-color: var(--ink);
+}
+body[data-view="tree"] .view-patterns { display: none; }
+body[data-view="patterns"] .view-tree { display: none; }
+
+/* ── 设计模式视图 ─────────────────── */
+.psub { margin: 14px 0 4px; }
+.psub .tag.fam { font-size: 12px; }
+ul.pats { margin: 0; padding: 0; list-style: none; }
+.pat { padding: 4px 0; font-size: 13px; }
+/* 模式名:加粗 + 虚线下划线 = 可点击看做法 */
+.pname { font-weight: 600; }
+.pname.more { border-bottom: 1px dashed #d1d5db; padding-bottom: 1px; }
+.pname.more:hover { border-bottom-color: var(--ink); }
+.pname .aka { font-weight: 400; color: var(--faint); font-size: 11px; }
+.intent { color: var(--gray); font-size: 12px; }
+.back { color: var(--faint); font-size: 11px; text-decoration: none; margin-left: 4px; }
+.back:hover { color: var(--ink); text-decoration: underline; }
+
 /* ── 窄屏:单栏,横向细线分隔 ───────── */
 @media (max-width: 900px) {
   body { padding: 20px; }
@@ -144,7 +177,13 @@ ul.leaves > li:hover { background: var(--hover); }
 }
 </style>
 </head>
-<body>
+<body data-view="tree">
+
+<nav class="views">
+  <button data-view="tree" class="active">分化树</button>
+  <button data-view="patterns">设计模式</button>
+</nav>
+<div class="view view-tree">
 
 <div class="poster">
 
@@ -456,5 +495,126 @@ ul.leaves > li:hover { background: var(--hover); }
 
 </div>
 
+</div>
+
+<div class="view view-patterns">
+
+<div class="poster">
+
+  <section class="col">
+    <h2>创建型</h2>
+    <p class="sub">对象怎么来 —— 把「new 什么、怎么 new」从使用方剥离</p>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="把「创建哪个实现类」的决策从使用方剥离——使用方只面对抽象">选实现</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:一个 makeXxx() 集中所有 new,换实现只改这一处">工厂 <span class="aka">工厂方法 Factory Method</span></span> <span class="intent">把实例化推迟到子类 / 集中点,使用方不直接 new</span> <a class="back" href="#l-a-7">← 创建对象写死类名,换实现要全局搜 new</a></li>
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:整套相关对象的创建集中在一个工厂接口后面,整套替换(如按主题整套换 UI 控件)">抽象工厂</span> <span class="intent">创建一族相关对象而不指定具体类</span> </li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="复杂对象的构建分步骤进行,构造过程与最终表示分离">组装过程</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:链式调用逐部设置,或 Director 固定步骤;构造过程与表示分离">建造者</span> <span class="intent">把复杂对象的构建过程拆成步骤,同样过程可建不同表示</span> </li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="不重新构造,克隆已有对象得到新实例">复制</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:clone 预配置好的实例代替 new;对象配置复杂或运行时才知类型时尤其合适">原型</span> <span class="intent">以已有对象为模具,通过拷贝创建新对象</span> </li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="控制实例的数量(通常为一个),并管理它的访问点">数量控制</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:必须用全局实例时,集中一处创建,并暴露 reset() 供测试隔离">受控单例 <span class="aka">单例 Singleton</span></span> <span class="intent">保证一个类只有一个实例,并提供受控访问点</span> <a class="back" href="#l-a-9">← 全局实例到处被 import,测试难写</a></li>
+    </ul>
+  </section>
+
+  <section class="col">
+    <h2>结构型</h2>
+    <p class="sub">对象怎么组合与对接</p>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="让形状不同的接口能一起工作:转换,或提供统一入口">接口对接</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:写一个 Adapter 实现 B 期望的接口,内部转调 A,双方都不用改">适配器</span> <span class="intent">把一个类的接口转换成客户期望的另一个接口</span> <a class="back" href="#l-a-6">← 两个接口对不上,又改不了其中一方</a></li>
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:一个 Facade 类封装子系统的多个内部调用,外部只依赖它">外观模式</span> <span class="intent">为子系统的一组接口提供统一的高层入口</span> <a class="back" href="#l-a-1">← 东西之间的关系乱</a></li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="不直接碰目标对象,经一层代理中转,顺手插手(缓存/校验/翻译)">间接访问</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:包一层同接口的代理对象,转发前后插手——缓存、校验、翻译、惰性加载都塞在这层">代理</span> <span class="intent">为对象提供代理,控制对它的访问(缓存/校验/翻译/惰性加载)</span> <a class="back" href="#l-b-9">← 外部会变化</a></li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="运行期给对象加行为,不改它的类">动态叠加</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:包一层同名接口,前后叠加行为(日志、缓存、鉴权),原对象无感知">装饰器</span> <span class="intent">动态地给对象叠加职责,而不改变其类</span> <a class="back" href="#l-a-5">← 加新功能必须改老代码</a></li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="两个变化维度各自成树,用组合连接,而非交叉继承">多维拆分</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:抽象和实现各自一棵类树,用组合连接;如 形状×颜色、UI×平台 独立演化">桥接</span> <span class="intent">抽象与实现分离,使两个维度可以独立变化</span> </li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="个体与组合实现同一接口,客户端无差别对待">树形组合</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:个体和组合实现同一接口,客户端无差别对待;树形结构(目录/文件、组件树)统一遍历与操作">组合</span> <span class="intent">把对象组成树表示部分-整体,统一单个与组合</span> </li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="大量细粒度对象共享不变的部分,只传入变化的部分">共享减重</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:不变的内蕴状态共享一份,变化的外蕴状态由调用方传入(字符、棋子)">享元</span> <span class="intent">通过共享支撑大量细粒度对象</span> </li>
+    </ul>
+  </section>
+
+  <section class="col">
+    <h2>行为型</h2>
+    <p class="sub">对象怎么协作 —— 职责如何在对象间分配与流动</p>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="一族算法可互换,选择发生在运行期而非编译期">算法替换</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:可互换的算法各自封装成同接口实现,运行时按场景选用">策略模式</span> <span class="intent">定义一族可互换的算法,运行时选择</span> <a class="back" href="#l-a-5">← 加新功能必须改老代码</a></li>
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:基类固定算法骨架,变化点留成钩子方法;新变体 = 新子类填钩子,骨架代码不动">模板方法</span> <span class="intent">固定算法骨架,变化步骤延迟到子类实现</span> <a class="back" href="#l-a-5">← 加新功能必须改老代码</a></li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="把请求变成对象:可传递、排队、记录、撤销">请求对象化</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:把操作封装成命令对象,do / undo 成对——可排队、可记录、可撤销,是补偿动作和事件溯源的天然载体">命令模式</span> <span class="intent">把请求封装成对象:可参数化、排队、记录、撤销</span> <a class="back" href="#l-b-5">← 用户要求撤销 / 重做</a> <a class="back" href="#l-b-6">← 执行一半挂了,数据半新半旧</a></li>
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:处理者连成链,请求顺流而下直到有人接;中间件、审批流、事件冒泡都是变体">责任链</span> <span class="intent">多个对象都有机会处理请求,发送者与接收者解耦</span> </li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="变化的通知不直连,经订阅机制或中介中转">通信解耦</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:主题维护订阅列表,add / remove / notify 三件套,变化时统一通知">观察者</span> <span class="intent">定义一对多依赖,主题变化时通知所有订阅者</span> <a class="back" href="#l-a-8">← 一变要通知多方,直接调用缠成网</a></li>
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:多方互调缠成网时,引入一个中介对象集中协调,各方只跟中介说话(如聊天室、表单联动控制器)">中介者</span> <span class="intent">用中介对象集中封装多方交互,各方互不知晓</span> <a class="back" href="#l-a-8">← 一变要通知多方,直接调用缠成网</a></li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="对象行为随状态改变;状态可保存、可恢复">状态管理</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:显式定义状态集合与合法迁移(如 待支付→已支付→已发货),非法或重复的流转直接拒绝">状态机 <span class="aka">状态 State</span></span> <span class="intent">对象随内部状态改变行为,看上去像改变了类</span> <a class="back" href="#l-b-8">← 外部会重复</a></li>
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:在关键点保存状态快照,可回滚到任一保存点">Memento</span> <span class="intent">在不破坏封装的前提下捕获并保存状态,以便恢复</span> <a class="back" href="#l-b-4">← 历史丢了,无法审计回放</a> <a class="back" href="#l-b-5">← 用户要求撤销 / 重做</a></li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="访问聚合结构的元素,而不暴露其内部表示">遍历访问</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:遍历接口与集合实现分离(for…of / Iterator);同一集合可并存多种遍历策略">迭代器</span> <span class="intent">顺序访问聚合元素而不暴露内部结构</span> </li>
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:操作外置到 Visitor,元素只留 accept;适合结构稳定、操作常增的场景(编译器 AST 处理)">访问者</span> <span class="intent">在不改元素类的前提下,为元素结构定义新操作</span> </li>
+    </ul>
+
+    <div class="psub"><span class="tag fam more" tabindex="0" data-detail="为小型语言定义文法并解释执行">语法解释</span></div>
+    <ul class="pats">
+      <li class="pat"><span class="pname more" tabindex="0" data-detail="做法:每条文法规则一个类,递归求值;适合小型 DSL / 规则表达式,复杂语言改用解析器生成器">解释器</span> <span class="intent">为简单语言定义文法表示并解释执行</span> </li>
+    </ul>
+  </section>
+
+</div>
+
+</div>
+<script>const btns = document.querySelectorAll(".views button");
+function setView(v) {
+  document.body.dataset.view = v;
+  btns.forEach((b) => b.classList.toggle("active", b.dataset.view === v));
+}
+btns.forEach((b) => b.addEventListener("click", () => setView(b.dataset.view)));
+// 模式视图里点回跳链接:切回树视图,锚点跳转交给浏览器默认行为
+document.querySelectorAll(".view-patterns a.back").forEach((a) =>
+  a.addEventListener("click", () => setView("tree")),
+);</script>
 </body>
 </html>

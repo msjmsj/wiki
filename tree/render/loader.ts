@@ -119,7 +119,10 @@ export function loadCategories(
     return cat;
   });
 
-  const unused = Object.keys(concepts).filter((id) => !used.has(id));
+  // GoF 模式概念即使未被树引用,也会被设计模式页收录,不警告
+  const unused = Object.keys(concepts).filter(
+    (id) => !used.has(id) && !concepts[id].gof,
+  );
   if (unused.length > 0) {
     console.warn(`⚠︎ 未被引用的概念:${unused.join(", ")}`);
   }

@@ -11,6 +11,14 @@
 
 export type ConceptKind = "problem" | "solution";
 
+/** GoF 模式信息(可选)。有此字段的概念会出现在设计模式页 */
+export interface GofInfo {
+  /** 一句话意图(GoF 经典表述) */
+  intent: string;
+  /** GoF 原名/别名(显示名与 GoF 名不同时用),如 "工厂方法 Factory Method" */
+  aka?: string;
+}
+
 /** 概念:权威定义(concepts/<kind>/<id>.json,一概念一文件) */
 export interface Concept {
   /** 标签显示名,如 "不可变" */
@@ -23,6 +31,8 @@ export interface Concept {
    * 叶子引用子性质,父概念自动视为被引用。
    */
   parent?: string;
+  /** GoF 模式信息(可选,仅 solution 概念) */
+  gof?: GofInfo;
 }
 
 /** 加载后的概念,kind 由所在目录(problem/ 或 solution/)决定 */

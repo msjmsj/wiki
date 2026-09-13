@@ -1,4 +1,7 @@
 {
   "name": "观察者",
-  "detail": "做法:主题维护订阅列表,add / remove / notify 三件套,变化时统一通知"
+  "detail": "做法:主题维护订阅列表,add / remove / notify 三件套,变化时统一通知",
+  "gof": {
+    "intent": "定义一对多依赖,主题变化时通知所有订阅者"
+  }
 }
