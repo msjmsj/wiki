@@ -43,7 +43,11 @@ switch (cmd) {
   }
   case "dev": {
     const { createServer } = await import("vite");
-    const server = await createServer();
+    // 默认绑 127.0.0.1:只绑 IPv6 ::1 时,部分浏览器解析 localhost 到 IPv4 会打不开
+    const server = await createServer({
+      root: webDir,
+      server: { host: flags.host || "127.0.0.1" },
+    });
     await server.listen();
     server.printUrls();
     break;
