@@ -5,7 +5,13 @@
 export type ConceptKind = "problem" | "solution";
 
 export interface GofInfo {
+  /** 大类:创建型 / 结构型 / 行为型 / 扩展模式(见 patterns-layout.ts 的 PATTERN_SECTIONS) */
+  group: string;
+  /** 子组标签,如 "接口对接"(须存在于所属大类的子组注册表) */
+  subgroup: string;
+  /** 一句话意图(GoF 经典表述) */
   intent: string;
+  /** GoF 原名/别名(显示名与 GoF 名不同时用),如 "工厂方法 Factory Method" */
   aka?: string;
 }
 

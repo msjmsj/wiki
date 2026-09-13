@@ -1,5 +1,9 @@
 {
   "name": "依赖注入",
   "detail": "做法:依赖从构造函数 / 参数传入,生产传真实现,测试传 mock",
-  "level": "pattern"
+  "level": "pattern",
+  "gof": {
+    "group": "扩展模式",
+    "subgroup": "架构与装配"
+  }
 }

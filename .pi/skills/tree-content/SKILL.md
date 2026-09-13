@@ -51,8 +51,16 @@ Concept(概念)   → tree/concepts/<kind>/<id>.json
 // concepts/problem/coupling-change.json 可额外有 "parent": "coupling"
 ```
 
-**加 GoF 模式**:概念文件加 `"gof": { "intent": "一句话意图", "aka": "原名" }`,
-并在 `web/src/patterns-layout.ts` 的 LAYOUT 里排入子组(漏排会被构建警告)。
+**加 GoF 模式 / 设计模式**(只需 1 个文件):概念文件加 gof 字段即可自动出现在模式页——
+
+```jsonc
+"gof": { "group": "结构型", "subgroup": "接口对接", "intent": "一句话意图", "aka": "原名(可选)" }
+```
+
+group/subgroup 必须在 `web/src/patterns-layout.ts` 的注册表里(创建型/结构型/行为型/扩展模式
+及其子组);只有新增大类或子组才动那个文件。错了会被构建警告。
+
+**加机制**:新建概念文件(不带 gof)+ 在叶子 keywords 里引用,共 2 个文件。
 
 **加子性质**:新建 problem 概念 + `"parent"`,叶子的 tags 改指子性质即可。
 

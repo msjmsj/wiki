@@ -1,5 +1,9 @@
 {
   "name": "防腐层",
   "detail": "做法:adapter 目录集中所有翻译函数,外部模型在这里转成本系统模型,内部代码不见外部结构",
-  "level": "pattern"
+  "level": "pattern",
+  "gof": {
+    "group": "扩展模式",
+    "subgroup": "通信与边界"
+  }
 }

@@ -1,5 +1,9 @@
 {
   "name": "绞杀者模式",
   "detail": "做法:不推倒重写——新功能进新系统,老功能逐个迁移,老系统被慢慢「绞杀」到死",
-  "level": "pattern"
+  "level": "pattern",
+  "gof": {
+    "group": "扩展模式",
+    "subgroup": "演进与溯源"
+  }
 }

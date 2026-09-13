@@ -7,7 +7,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validate } from "./src/validate.ts";
-import { PLACED_PATTERN_IDS } from "./src/patterns-layout.ts";
+import { PATTERN_KEYS } from "./src/patterns-layout.ts";
 import type { Category, ConceptEntry, ConceptKind } from "./src/types.ts";
 
 const treeDir = fileURLToPath(new URL("../tree/", import.meta.url));
@@ -30,14 +30,18 @@ for (const kind of ["problem", "solution"] as ConceptKind[]) {
 
 validate(categories, concepts);
 
-// 布局完整性:任何 level=pattern / 带 gof 的概念都必须排入设计模式视图
-const unplaced = Object.keys(concepts).filter(
-  (id) =>
-    (concepts[id].gof || concepts[id].level === "pattern") &&
-    !PLACED_PATTERN_IDS.has(id),
-);
-if (unplaced.length) {
-  console.warn(`⚠︎ 模式概念未排入布局:${unplaced.join(", ")}`);
+// 布局完整性:level=pattern 的概念必须带 gof;gof.group/subgroup 必须在注册表里
+for (const [id, c] of Object.entries(concepts)) {
+  if (c.kind !== "solution") continue;
+  if (c.level === "pattern" && !c.gof) {
+    console.warn(`⚠︎ ${id}: level=pattern 但缺 gof 字段(不会出现在模式页)`);
+    continue;
+  }
+  if (c.gof && !PATTERN_KEYS.has(`${c.gof.group}/${c.gof.subgroup}`)) {
+    console.warn(
+      `⚠︎ ${id}: gof.group/subgroup「${c.gof.group}/${c.gof.subgroup}」不在注册表 patterns-layout.ts`,
+    );
+  }
 }
 
 console.log(

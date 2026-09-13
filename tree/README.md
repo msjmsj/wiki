@@ -53,13 +53,12 @@ tree/
 
 ## 设计模式视图
 
-GoF 23 模式,三分法打底 + 16 个子组(按「被解耦/被变化的东西」细分)。
+GoF 23 + 扩展模式,四个板块 × 若干子组(按「被解耦/被变化的东西」细分)。
 
-- 概念文件加 `gof: { intent, aka? }` 字段即被收录
-- 布局与子组顺序在 `render/patterns.ts` 的 `LAYOUT` 配置里
+- **收录是自描述的**:概念文件带 `gof: { group, subgroup, intent, aka? }` 即自动入页,
+  无需登记;group/subgroup 必须存在于 `render/patterns-layout.ts` 的注册表(校验兜底)
 - 反向链接(← 树上的叶子)构建时自动反查;点击切回树视图并定位
-- 带 gof 标记但未被树引用的概念是允许的(如桥接、享元)
-- 加新视图:在 `render/` 加渲染函数,在 `build.ts` 的 views 数组加一项
+- 只有「新增大类/子组」才需要改 patterns-layout.ts
 
 ## 常见修改
 
