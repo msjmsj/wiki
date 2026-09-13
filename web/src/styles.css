@@ -211,6 +211,11 @@ ul.leaves > li:hover { background: var(--hover); }
   color: var(--ink); font-weight: 600;
   border-bottom-color: var(--ink);
 }
+.views .ver {
+  margin-left: auto; align-self: center;
+  font-size: 11px; color: var(--faint);
+  font-family: ui-monospace, Consolas, monospace;
+}
 body[data-view="tree"] .view-patterns { display: none; }
 body[data-view="patterns"] .view-tree { display: none; }
 

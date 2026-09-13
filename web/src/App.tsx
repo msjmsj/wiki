@@ -7,6 +7,7 @@ import { PatternsView } from "./PatternsView";
 import { ConceptDrawer, ShowConceptContext } from "./ConceptDrawer.tsx";
 
 const usage = buildUsage(categories);
+const VERSION = import.meta.env.VITE_APP_VERSION ?? "dev";
 
 type ViewKey = "tree" | "patterns";
 const VIEWS: { key: ViewKey; label: string }[] = [
@@ -56,6 +57,9 @@ export default function App() {
             {v.label}
           </button>
         ))}
+        <span className="ver" title="版本 = 构建日期 + 提交计数">
+          {VERSION}
+        </span>
       </nav>
       <div className="view view-tree">
         <TreeView categories={categories} concepts={concepts} />

@@ -9,6 +9,20 @@
  */
 
 import { fileURLToPath } from "node:url";
+import { execSync } from "node:child_process";
+
+// 版本号 = 当日日期 + 提交计数(每次提交自动增加);CI 里 checkout 需 fetch-depth: 0
+const VERSION = (() => {
+  const d = new Date();
+  const date = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+  try {
+    const count = execSync("git rev-list --count HEAD", { encoding: "utf8" }).trim();
+    return `v${date}+${count}`;
+  } catch {
+    return `v${date}+local`;
+  }
+})();
+process.env.VITE_APP_VERSION = VERSION;
 
 const [cmd, sub, ...rest] = process.argv.slice(2);
 
