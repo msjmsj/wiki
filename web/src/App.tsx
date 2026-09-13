@@ -27,9 +27,24 @@ export default function App() {
   // 跳回树视图:flushSync 确保 DOM 显隐先更新,之后浏览器再处理锚点滚动
   const jumpToTree = () => flushSync(() => setView("tree"));
 
+  // 空白处点击收回侧栏;点在胶囊/症状上等可交互元素上不影响切换
+  useEffect(() => {
+    if (!active) return;
+    const h = (e: MouseEvent) => {
+      const el = e.target as Element;
+      if (el.closest(".drawer") || el.closest(".kw, .tag, .pname, .sym.more")) return;
+      setActive(null);
+    };
+    document.addEventListener("click", h);
+    return () => document.removeEventListener("click", h);
+  }, [active]);
+
   return (
     <ShowConceptContext.Provider
-      value={(id, note) => setActive({ id, note })}
+      // 再点同一个胶囊 = 收起(开关式)
+      value={(id, note) =>
+        setActive((cur) => (cur?.id === id ? null : { id, note }))
+      }
     >
       <nav className="views">
         {VIEWS.map((v) => (

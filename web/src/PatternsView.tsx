@@ -92,7 +92,10 @@ function PatternName({
       className="pname"
       role="button"
       tabIndex={0}
-      onClick={() => show(id)}
+      onClick={(e) => {
+        e.stopPropagation();
+        show(id);
+      }}
       onKeyDown={(e) => e.key === "Enter" && show(id)}
     >
       {concept.name}
