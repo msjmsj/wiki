@@ -33,16 +33,11 @@ function lintConcept(
       }
     }
   }
-  // doc 是 Markdown:必须以 ### 小节开头;不得残留旧式「标签:」段落(未迁移)
+  // doc 是 Markdown:必须以 ### 小节开头(结构校验)
+  //(曾有的「旧式标签:」检测已移除——中文行文的冒号是正常语法,误报太多;
+  //  小节的骨架由「必须 ### 开头」+ TODO 检测保证)
   if (!c.doc.startsWith("### ")) {
     warnings.push(`${id}: doc 须以「### 小节标题」开头`);
-  }
-  // 剥掉代码块和小节标题后再查旧式段落(避免误报 mermaid 图里的「节点:文本」)
-  const prose = c.doc
-    .replaceAll(/```[\s\S]*?```/g, "")
-    .replaceAll(/^### .*$/gm, "");
-  if (/^「?[^:：\n]{1,12}[:：]/m.test(prose)) {
-    warnings.push(`${id}: doc 含有旧式「标签:」段落,应改为 ### 小节`);
   }
 }
 
